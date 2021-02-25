@@ -3,6 +3,19 @@
 namespace space
 {
 template <unsigned int size, typename T>
+Vector<size, T>& Vector<size, T>::operator=(const Vector<size, T>& v)
+{
+    std::copy(v.vect_.begin(), v.vect_.end(), this->vect_.begin());
+    return *this;
+}
+
+template <unsigned int size, typename T>
+Vector<size, T>::Vector(const Vector<size, T>& v)
+{
+    *this = v;
+}
+
+template <unsigned int size, typename T>
 inline Vector<size, T>& Vector<size, T>::operator*=(T rhs)
 {
     for (T& elt : this->vect_)
