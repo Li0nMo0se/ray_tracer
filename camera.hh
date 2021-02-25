@@ -6,14 +6,18 @@ namespace scene
 {
 class Camera
 {
-public:
+  public:
     Camera(space::Vector3<float>& origin,
            space::Vector3<float>& y_axis,
            space::Vector3<float>& z_axis,
            const float z_min,
            const float alpha,
            const float beta);
-private:
+
+    Camera(const Camera&) = default;
+    Camera& operator=(const Camera&) = default;
+    // Copy assignment
+  private:
     // Origin of the camera `C`
     space::Vector3<float> origin_;
 
@@ -27,9 +31,9 @@ private:
     float z_min_;
 
     // alpha angle
-    float alpha_; 
+    float alpha_;
     // beta angle
     float beta_;
 };
 
-}
+} // namespace scene
