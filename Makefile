@@ -1,6 +1,6 @@
 CC = g++
 
-CC_FILES=image.cc ray.cc camera.cc sphere.cc
+CC_FILES=image.cc ray.cc camera.cc sphere.cc scene.cc
 MAIN_FILE=main.cc
 BIN=raytracer
 OBJ_FILES = $(CC_FILES:.cc=.o)
