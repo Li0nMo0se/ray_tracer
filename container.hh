@@ -15,6 +15,14 @@ class Container
     const_iterator begin() const { return vect_.cbegin(); }
     const_iterator end() const { return vect_.cend(); }
 
+    virtual Container& operator=(const Container& v)
+    {
+        std::copy(v.vect_.begin(), v.vect_.end(), this->vect_.begin());
+        return *this;
+    }
+
+    Container(const Container& v) { *this = v; }
+
     template <unsigned int _size, typename _T>
     friend std::ostream& operator<<(std::ostream& os,
                                     const Container<_size, _T>& container);

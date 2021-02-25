@@ -12,9 +12,6 @@ class Vector : public Container<size, T>
     Vector() = default;
 
   public:
-    virtual Vector& operator=(const Vector& v);
-    Vector(const Vector& v);
-
     inline Vector& operator*=(T rhs);
     inline Vector operator*(T rhs) const;
 
