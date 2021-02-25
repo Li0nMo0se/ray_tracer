@@ -54,8 +54,9 @@ class Vector3 : public Vector<3, T>
 
     // Default constructor, undefined values
     Vector3()
-      : Vector3(static_cast<T>(0), static_cast<T>(0),static_cast<T>(0))
-    {}
+        : Vector3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0))
+    {
+    }
 
     Vector3 cross_product(const Vector3& rhs) const;
 
@@ -78,11 +79,12 @@ class Vector4 : public Vector<4, T>
 
     // Default constructor, undefined values
     Vector4()
-      : Vector4(static_cast<T>(0),
-                static_cast<T>(0),
-                static_cast<T>(0),
-                static_cast<T>(0))
-    {}
+        : Vector4(static_cast<T>(0),
+                  static_cast<T>(0),
+                  static_cast<T>(0),
+                  static_cast<T>(0))
+    {
+    }
 
     ~Vector4() = default;
 };

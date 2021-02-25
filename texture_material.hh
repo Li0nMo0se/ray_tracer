@@ -1,5 +1,7 @@
 #pragma once
 
+#include "vector.hh"
+
 namespace scene
 {
 
@@ -7,7 +9,7 @@ using Color3 = space::Vector3<unsigned char>;
 
 class TextureMaterial
 {
-public:
+  public:
     TextureMaterial() = default;
     virtual ~TextureMaterial() = default;
 
@@ -16,4 +18,4 @@ public:
     virtual float get_ks(const space::Point3&) const = 0;
     virtual float get_ns(const space::Point3&) const = 0;
 };
-}
+} // namespace scene

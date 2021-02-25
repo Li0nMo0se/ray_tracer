@@ -6,7 +6,7 @@ namespace space
 {
 class Ray
 {
-public:
+  public:
     Ray(const Point3& origin, const Vector3<float>& direction);
     Ray(const Ray& ray);
 
@@ -14,7 +14,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);
 
-private:
+  private:
     Point3 origin_;
     Vector3<float> direction_;
 };

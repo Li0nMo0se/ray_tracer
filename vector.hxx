@@ -43,7 +43,8 @@ inline Vector<size, T>& Vector<size, T>::operator+=(const Vector<size, T>& rhs)
 }
 
 template <unsigned int size, typename T>
-inline Vector<size, T> Vector<size, T>::operator+(const Vector<size, T>& rhs) const
+inline Vector<size, T>
+Vector<size, T>::operator+(const Vector<size, T>& rhs) const
 {
     Vector<size, T> new_vect = *this;
     new_vect += rhs;
@@ -57,7 +58,8 @@ inline Vector<size, T>& Vector<size, T>::operator-=(const Vector<size, T>& rhs)
     return *this;
 }
 template <unsigned int size, typename T>
-inline Vector<size, T> Vector<size, T>::operator-(const Vector<size, T>& rhs) const
+inline Vector<size, T>
+Vector<size, T>::operator-(const Vector<size, T>& rhs) const
 {
     Vector<size> new_vect = *this;
     new_vect -= rhs;
