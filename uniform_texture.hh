@@ -6,28 +6,30 @@ namespace scene
 {
 class UniformTexture : public TextureMaterial
 {
-public:
-    Color3 get_color(const space::Point3&) const override
+  public:
+    UniformTexture(const Color3 colors,
+                   const float kd,
+                   const float ks,
+                   const float ns)
+        : colors_(colors)
+        , kd_(kd)
+        , ks_(ks)
+        , ns_(ns)
     {
-        return colors_;
     }
 
-    float get_kd(const space::Point3&) const override
-    {
-        return kd_;
-    }
+    UniformTexture(const UniformTexture&) = default;
+    UniformTexture& operator=(const UniformTexture&) = default;
 
-    float get_ks(const space::Point3&) const override
-    {
-        return ks_;
-    }
+    Color3 get_color(const space::Point3&) const override { return colors_; }
 
-    float get_ns(const space::Point3&) const override
-    {
-        return ns_;
-    }
+    float get_kd(const space::Point3&) const override { return kd_; }
 
-private:
+    float get_ks(const space::Point3&) const override { return ks_; }
+
+    float get_ns(const space::Point3&) const override { return ns_; }
+
+  private:
     Color3 colors_;
     float kd_;
     float ks_;

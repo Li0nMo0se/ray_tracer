@@ -8,7 +8,9 @@ class Ray
 {
   public:
     Ray(const Point3& origin, const Vector3<float>& direction);
-    Ray(const Ray& ray);
+
+    Ray(const Ray& ray) = default;
+    Ray& operator=(const Ray& ray) = default;
 
     ~Ray() = default;
 
