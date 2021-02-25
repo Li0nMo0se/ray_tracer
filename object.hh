@@ -28,6 +28,6 @@ class Object
 
   private:
     space::Point3 origin_;
-    const TextureMaterial& texture_;
+    TextureMaterial texture_;
 };
 } // namespace scene
