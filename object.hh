@@ -11,11 +11,11 @@ namespace scene
 class Object
 {
   public:
-    Object(const space::Point3& origin,
-           std::unique_ptr<TextureMaterial> texture)
+    Object(const space::Point3& origin, TextureMaterial* const texture)
         : origin_(origin)
-        , texture_(std::move(texture))
+        , texture_(nullptr)
     {
+        texture_.reset(texture);
     }
 
     virtual ~Object() = default;

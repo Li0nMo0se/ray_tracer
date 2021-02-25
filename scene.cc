@@ -10,7 +10,7 @@ Scene::Scene(const Camera& camera)
 Scene::Scene(const Camera& camera,
              const objects_t& objects,
              const lights_t& lights)
-    : Scene(camera_)
+    : Scene(camera)
 {
     objects_ = objects;
     lights_ = lights;

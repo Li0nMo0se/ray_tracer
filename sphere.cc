@@ -4,7 +4,7 @@ namespace scene
 {
 Sphere::Sphere(const space::Point3& origin,
                const space::Vector3<float> radius,
-               const TextureMaterial& texture)
+               TextureMaterial* const texture)
     : Object(origin, texture)
     , radius_(radius)
 {

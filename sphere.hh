@@ -10,7 +10,7 @@ class Sphere : public Object
   public:
     Sphere(const space::Point3& origin,
            const space::Vector3<float> radius,
-           const TextureMaterial& texture);
+           TextureMaterial* const texture);
 
     virtual std::optional<space::Point3>
     intersect(const space::Ray& ray) const override;
