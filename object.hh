@@ -3,6 +3,7 @@
 #include "ray.hh"
 #include "texture_material.hh"
 #include "vector.hh"
+#include <memory>
 #include <optional>
 
 namespace scene
@@ -10,9 +11,10 @@ namespace scene
 class Object
 {
   public:
-    Object(const space::Point3& origin, const TextureMaterial& texture)
+    Object(const space::Point3& origin,
+           std::unique_ptr<TextureMaterial> texture)
         : origin_(origin)
-        , texture_(texture)
+        , texture_(std::move(texture))
     {
     }
 
@@ -24,10 +26,10 @@ class Object
 
     virtual space::Vector3<float> get_norm(const space::Point3& p) const = 0;
 
-    const TextureMaterial& get_texture() { return texture_; }
+    const TextureMaterial& get_texture() { return *texture_; }
 
   private:
     space::Point3 origin_;
-    TextureMaterial texture_;
+    std::unique_ptr<TextureMaterial> texture_;
 };
 } // namespace scene
