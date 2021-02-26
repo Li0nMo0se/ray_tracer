@@ -34,7 +34,7 @@ class Vector : public Container<size, T>
     virtual ~Vector() = default;
 };
 
-template <unsigned int size, typename T>
+template <unsigned int size, typename T = float>
 inline std::ostream& operator<<(std::ostream& os, const Vector<size, T>& vect)
 {
     os << "V";
@@ -61,7 +61,20 @@ class Vector3 : public Vector<3, T>
     Vector3 cross_product(const Vector3& rhs) const;
 
     ~Vector3() = default;
+
+    template <typename _T>
+    friend Vector3<_T> operator*(_T lhs, const Vector3<_T>& v);
 };
+
+template <typename T = float>
+inline Vector3<T> operator*(T lhs, const Vector3<T>& v)
+{
+    Vector3 res(v);
+    res.vect_[0] *= lhs;
+    res.vect_[1] *= lhs;
+    res.vect_[2] *= lhs;
+    return res;
+}
 
 using Point3 = Vector3<float>;
 
