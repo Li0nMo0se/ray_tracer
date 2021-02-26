@@ -1,17 +1,37 @@
 #pragma once
 
-#include "container.hh"
+#include <array>
+#include <cassert>
 #include <ostream>
+#include <vector>
 
 namespace space
 {
 template <unsigned int size, typename T = float>
-class Vector : public Container<size, T>
+class Vector
 {
   protected:
     Vector() = default;
 
+    using iterator = typename std::array<T, size>::iterator;
+    iterator begin() { return vect_.begin(); }
+    iterator end() { return vect_.end(); };
+
+    std::array<T, size> vect_;
+
   public:
+    Vector(const std::array<T, size>& values)
+        : vect_(values)
+    {
+    }
+
+    Vector& operator=(const Vector&) = default;
+    Vector(const Vector&) = default;
+
+    using const_iterator = typename std::array<T, size>::const_iterator;
+    const_iterator begin() const { return vect_.cbegin(); }
+    const_iterator end() const { return vect_.cend(); }
+
     inline Vector& operator*=(T rhs);
     inline Vector operator*(T rhs) const;
 
@@ -32,74 +52,39 @@ class Vector : public Container<size, T>
     inline Vector normalized() const;
 
     virtual ~Vector() = default;
+
+    friend Vector<3, float> cross_product(const Vector<3, float>& lhs,
+                                          const Vector<3, float>& rhs);
 };
 
 template <unsigned int size, typename T = float>
 inline std::ostream& operator<<(std::ostream& os, const Vector<size, T>& vect)
 {
-    os << "V";
-    return os << static_cast<Container<size, T>>(vect);
+    os << "(";
+    typename Vector<size, T>::const_iterator it = vect.begin();
+    if (it != vect.end())
+        os << *it;
+    it++;
+    for (; it < vect.end(); it++)
+    {
+        os << "," << *it;
+    }
+
+    os << ")";
+    return os;
 }
 
-template <typename T = float>
-class Vector3 : public Vector<3, T>
+template <unsigned int size, typename T = float>
+inline Vector<size, T> operator*(const float scalar,
+                                 const Vector<size, T>& vect)
 {
-  public:
-    Vector3(const T x, const T y, const T z)
-    {
-        this->vect_[0] = x;
-        this->vect_[1] = y;
-        this->vect_[2] = z;
-    }
-
-    // Default constructor, undefined values
-    Vector3()
-        : Vector3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(0))
-    {
-    }
-
-    Vector3 cross_product(const Vector3& rhs) const;
-
-    ~Vector3() = default;
-
-    template <typename _T>
-    friend Vector3<_T> operator*(_T lhs, const Vector3<_T>& v);
-};
-
-template <typename T = float>
-inline Vector3<T> operator*(T lhs, const Vector3<T>& v)
-{
-    Vector3 res(v);
-    res.vect_[0] *= lhs;
-    res.vect_[1] *= lhs;
-    res.vect_[2] *= lhs;
-    return res;
+    return vect * scalar;
 }
 
-using Point3 = Vector3<float>;
+using Vector3 = Vector<3, float>;
+using Point3 = Vector3;
 
-template <typename T = float>
-class Vector4 : public Vector<4, T>
-{
-  public:
-    Vector4(const T x, const T y, const T z, const T w)
-    {
-        this->vect_[0] = x;
-        this->vect_[1] = y;
-        this->vect_[2] = z;
-        this->vect_[3] = w;
-    }
+inline Vector3 cross_product(const Vector3& lhs, const Vector3& rhs);
 
-    // Default constructor, undefined values
-    Vector4()
-        : Vector4(static_cast<T>(0),
-                  static_cast<T>(0),
-                  static_cast<T>(0),
-                  static_cast<T>(0))
-    {
-    }
-
-    ~Vector4() = default;
-};
 } // namespace space
 #include "vector.hxx"

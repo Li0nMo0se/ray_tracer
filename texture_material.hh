@@ -5,7 +5,7 @@
 namespace scene
 {
 
-using Color3 = space::Vector3<unsigned char>;
+using Color3 = space::Vector<3, unsigned char>;
 
 class TextureMaterial
 {

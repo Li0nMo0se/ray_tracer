@@ -6,6 +6,11 @@
 #include <memory>
 #include <vector>
 
+namespace rendering
+{
+class Engine;
+}
+
 namespace scene
 {
 class Scene
@@ -24,6 +29,9 @@ class Scene
 
     void add_object(const std::shared_ptr<Object>& object);
     void add_light(const std::shared_ptr<Light>& light);
+
+    // The engine won't modify the scene anyways
+    friend rendering::Engine;
 
   private:
     Camera camera_;

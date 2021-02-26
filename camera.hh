@@ -2,30 +2,40 @@
 
 #include "vector.hh"
 
+namespace rendering
+{
+class Engine;
+}
+
 namespace scene
 {
-class Camera
+class Camera final
 {
   public:
-    Camera(space::Vector3<float>& origin,
-           space::Vector3<float>& y_axis,
-           space::Vector3<float>& z_axis,
+    Camera(space::Vector3& origin,
+           space::Vector3& y_axis,
+           space::Vector3& z_axis,
            const float z_min,
            const float alpha,
            const float beta);
 
     Camera(const Camera&) = default;
     Camera& operator=(const Camera&) = default;
-    // Copy assignment
+
+    ~Camera() = default;
+
+    // The engine won't modify the camera anyways
+    friend rendering::Engine;
+
   private:
     // Origin of the camera `C`
-    space::Vector3<float> origin_;
+    space::Vector3 origin_;
 
     // Three axis of the camera
     // Unit vectors
-    space::Vector3<float> x_axis_;
-    space::Vector3<float> y_axis_;
-    space::Vector3<float> z_axis_;
+    space::Vector3 x_axis_;
+    space::Vector3 y_axis_;
+    space::Vector3 z_axis_;
 
     // Focal distance
     float z_min_;

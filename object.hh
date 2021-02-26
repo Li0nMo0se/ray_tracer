@@ -24,7 +24,7 @@ class Object
     virtual std::optional<space::Point3>
     intersect(const space::Ray& ray) const = 0;
 
-    virtual space::Vector3<float> get_norm(const space::Point3& p) const = 0;
+    virtual space::Vector3 get_norm(const space::Point3& p) const = 0;
 
     const TextureMaterial& get_texture() { return *texture_; }
 

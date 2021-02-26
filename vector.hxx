@@ -100,11 +100,10 @@ inline Vector<size, T> Vector<size, T>::normalized() const
     return v;
 }
 
-template <typename T>
-Vector3<T> Vector3<T>::cross_product(const Vector3<T>& rhs) const
+inline Vector3 cross_product(const Vector3& lhs, const Vector3& rhs)
 {
-    Vector3<T> res;
-    const auto& lhs_vect = this->vect_;
+    Vector3 res;
+    const auto& lhs_vect = lhs.vect_;
     const auto& rhs_vect = rhs.vect_;
     res.vect_[0] = lhs_vect[1] * rhs_vect[2] - lhs_vect[2] * rhs_vect[1];
     res.vect_[1] = lhs_vect[2] * rhs_vect[0] - lhs_vect[0] * rhs_vect[2];

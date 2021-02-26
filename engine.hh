@@ -1,20 +1,26 @@
 #pragma once
 
+#include <string>
+
+#include "camera.hh"
+#include "scene.hh"
+#include "vector.hh"
+
+namespace rendering
+{
 class Engine
 {
+  public:
+    static void render(const std::string& filename,
+                       const unsigned int width,
+                       const unsigned int height,
+                       const scene::Scene& scene);
 
-private:
-    
-    // Size of a pixel in the real world
-    // On x axis
-    float unit_x_;
-    // On y axis
-    float unit_y_;
+    Engine() = delete;
+    Engine& operator=(const Engine&) = delete;
+    Engine(const Engine&) = delete;
 
-    // Position of the first pixel (top left) in the real world
-    Vector3 top_left_pixel_;
-
-    // Resolution of the 2D image
-    unsigned int width_;
-    unsigned int height_;
-}
+  private:
+    static void cast_ray(const space::Ray& ray, const scene::Scene& scene);
+};
+} // namespace rendering
