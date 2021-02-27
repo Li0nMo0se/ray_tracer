@@ -1,0 +1,3 @@
+std::shared_ptr to std::unique_ptr pour Lights and Objects
+overload T * Vector<size, T> (commutatif)
+use array instead of vector
