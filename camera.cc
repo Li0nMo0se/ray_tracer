@@ -2,9 +2,9 @@
 
 namespace scene
 {
-Camera::Camera(space::Vector3& origin,
-               space::Vector3& y_axis,
-               space::Vector3& z_axis,
+Camera::Camera(const space::Vector3& origin,
+               const space::Vector3& y_axis,
+               const space::Vector3& z_axis,
                const float z_min,
                const float alpha,
                const float beta)

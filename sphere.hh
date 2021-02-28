@@ -9,7 +9,7 @@ class Sphere : public Object
 {
   public:
     Sphere(const space::Point3& origin,
-           const space::Vector3& radius,
+           const float radius,
            TextureMaterial* const texture);
 
     // Return positive t value if intersection
@@ -18,6 +18,6 @@ class Sphere : public Object
 
     virtual space::Vector3 get_norm(const space::Point3& intersection) const override;
 
-    space::Vector3 radius_;
+    const float radius_;
 };
 } //r namespace scene

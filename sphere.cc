@@ -4,7 +4,7 @@
 namespace scene
 {
 Sphere::Sphere(const space::Point3& origin,
-               const space::Vector3& radius,
+               const float radius,
                TextureMaterial* const texture)
     : Object(origin, texture)
     , radius_(radius)
@@ -59,7 +59,7 @@ std::optional<float> Sphere::intersect(const space::Ray& ray) const
     const space::Vector3 L = ray_origin - this->origin_;
     const float a = ray_direction.dot(ray_direction);
     const float b = 2 * ray_direction.dot(L);
-    const float c = L.dot(L) - ray_origin.dot(ray_origin);
+    const float c = L.dot(L) - radius_ * radius_;
 
     return solve_quadratic(a, b, c);
 }

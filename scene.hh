@@ -13,7 +13,7 @@ class Engine;
 
 namespace scene
 {
-class Scene
+class Scene final
 {
     using objects_t = std::vector<std::shared_ptr<Object>>;
     using lights_t = std::vector<std::shared_ptr<Light>>;
@@ -26,6 +26,8 @@ class Scene
 
     Scene(const Scene&) = default;
     Scene& operator=(const Scene&) = default;
+
+    ~Scene() = default;
 
     void add_object(const std::shared_ptr<Object>& object);
     void add_light(const std::shared_ptr<Light>& light);
