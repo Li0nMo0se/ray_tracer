@@ -28,7 +28,7 @@ class Object
 
     const TextureMaterial& get_texture() { return *texture_; }
 
-  private:
+  protected:
     space::Point3 origin_;
     std::unique_ptr<TextureMaterial> texture_;
 };

@@ -16,6 +16,9 @@ class Ray
 
     friend std::ostream& operator<<(std::ostream& os, const Ray& ray);
 
+    const Point3& origin_get() const;
+    const Vector3& direction_get() const;
+
   private:
     Point3 origin_;
     Vector3 direction_;
