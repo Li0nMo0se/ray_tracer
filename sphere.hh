@@ -12,7 +12,8 @@ class Sphere : public Object
            const space::Vector3& radius,
            TextureMaterial* const texture);
 
-    virtual std::optional<space::Point3>
+    // Return positive t value if intersection
+    virtual std::optional<float>
     intersect(const space::Ray& ray) const override;
 
     virtual space::Vector3 get_norm(const space::Point3& intersection) const override;

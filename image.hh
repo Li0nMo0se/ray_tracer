@@ -1,39 +1,23 @@
 #pragma once
 
 #include <memory>
+#include "color.hh"
 
 namespace image
 {
-template <typename T>
-struct Pixel
+class Image final
 {
-  public:
-    Pixel() // By default it is a black pixel
-        : r(0)
-        , g(0)
-        , b(0)
-    {
-    }
-
-    T r; // red
-    T g; // green
-    T b; // blue
-};
-
-// TODO templated image
-class Image
-{
-  private:
-    using pixel_t = Pixel<unsigned char>;
-
   public:
     Image(const unsigned int width, const unsigned int height);
+    ~Image() = default;
 
     void save(const std::string filename) const;
+
+    color::Color3& operator()(const unsigned int y, const unsigned int x);
 
   private:
     unsigned int width_;
     unsigned int height_;
-    std::unique_ptr<pixel_t> data_;
+    std::unique_ptr<color::Color3[]> data_;
 };
 } // namespace image

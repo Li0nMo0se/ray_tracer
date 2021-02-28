@@ -67,6 +67,12 @@ Vector<size, T>::operator-(const Vector<size, T>& rhs) const
 }
 
 template <unsigned int size, typename T>
+inline const T& Vector<size, T>::operator[](unsigned int i) const
+{
+    return vect_[i];
+}
+
+template <unsigned int size, typename T>
 inline T Vector<size, T>::dot(const Vector<size, T>& rhs) const
 {
     T res = 0.0f;

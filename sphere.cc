@@ -22,13 +22,18 @@ static std::optional<float> solve_quadratic(const float a, const float b, const 
     // else delta > 0
     float t0 = (-b + std::sqrt(delta) / (2 * a));
     float t1 = (-b - std::sqrt(delta) / (2 * a));
-    if (t1 < t0)
+
+    if (t0 < 0 && t1 < 0)
+        return std::nullopt;
+    else if (t0 < 0)
         return t1;
-    else
+    else if (t1 < 0)
         return t0;
+    else // t1 and t0 positive
+        return t0 < t1 ? t0 : t1;
 }
 
-std::optional<space::Point3> Sphere::intersect(const space::Ray& ray) const
+std::optional<float> Sphere::intersect(const space::Ray& ray) const
 {
     // P = O + tD
     // If sphere centered at (0, 0, 0)
@@ -56,11 +61,7 @@ std::optional<space::Point3> Sphere::intersect(const space::Ray& ray) const
     const float b = 2 * ray_direction.dot(L);
     const float c = L.dot(L) - ray_origin.dot(ray_origin);
 
-    const std::optional<float> t_intersection = solve_quadratic(a, b, c);
-    if (!t_intersection)
-        return std::nullopt;
-    else
-        return (ray_origin + t_intersection.value() * ray_direction);
+    return solve_quadratic(a, b, c);
 }
 
 space::Vector3 Sphere::get_norm(const space::Point3& intersection) const

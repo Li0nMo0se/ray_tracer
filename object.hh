@@ -21,7 +21,7 @@ class Object
     virtual ~Object() = default;
 
     // If no intersection return nullopt
-    virtual std::optional<space::Point3>
+    virtual std::optional<float>
     intersect(const space::Ray& ray) const = 0;
 
     virtual space::Vector3 get_norm(const space::Point3& p) const = 0;

@@ -11,8 +11,6 @@ template <unsigned int size, typename T = float>
 class Vector
 {
   protected:
-    Vector() = default;
-
     using iterator = typename std::array<T, size>::iterator;
     iterator begin() { return vect_.begin(); }
     iterator end() { return vect_.end(); };
@@ -24,6 +22,8 @@ class Vector
         : vect_(values)
     {
     }
+
+    Vector() = default;
 
     Vector& operator=(const Vector&) = default;
     Vector(const Vector&) = default;
@@ -43,6 +43,8 @@ class Vector
 
     inline Vector& operator-=(const Vector& rhs);
     inline Vector operator-(const Vector& rhs) const;
+
+    inline const T& operator[](unsigned int i) const;
 
     inline T dot(const Vector& rhs) const;
 

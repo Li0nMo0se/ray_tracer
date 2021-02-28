@@ -1,4 +1,6 @@
 #include "engine.hh"
+#include "image.hh"
+#include "vector.hh"
 
 #include <cmath>
 
@@ -9,6 +11,9 @@ void Engine::render(const std::string& filename,
                     const unsigned int resolution_height,
                     const scene::Scene& scene)
 {
+    // Create Image
+    image::Image im(resolution_width, resolution_height);
+
     // Find width & height of a pixel
     const scene::Camera& camera = scene.camera_;
 
@@ -46,17 +51,38 @@ void Engine::render(const std::string& filename,
             curr_pixel += unit_x * camera.x_axis_;
             // Ray computation
             const space::Vector3 ray_direction = curr_pixel - camera.origin_;
-            cast_ray(space::Ray(camera.origin_, ray_direction), scene);
+            color::Color3 pixel_color = cast_ray(space::Ray(camera.origin_, ray_direction), scene);
+            im(y, x) = pixel_color;
         }
         // Move to row below
         curr_pixel -= unit_y * camera.y_axis_;
         // Go back to left column
         curr_pixel -= unit_x * width * camera.x_axis_;
     }
+
+    im.save(filename);
 }
 
-void Engine::cast_ray(const space::Ray& ray, const scene::Scene& scene)
+color::Color3 Engine::cast_ray(const space::Ray& ray, const scene::Scene& scene)
 {
-    // TODO
+    // t such as P = O + tD
+    float t = -1.f; // t can't be negative
+    space::Point3 intersection;
+    std::shared_ptr<scene::Object> intersected_obj = nullptr;
+    for (const std::shared_ptr<scene::Object>& obj : scene.objects_)
+    {
+        const std::optional<float> t_intersection = obj->intersect(ray);
+        if (t_intersection && t_intersection.value() < t)
+        {
+            t = t_intersection.value();
+            intersection = ray.origin_get() + t * ray.direction_get();
+            intersected_obj = obj;
+        }
+    }
+    if (intersected_obj)
+        return intersected_obj->get_texture().get_color(intersection);
+    else // No intersection
+        return color::black;
 }
+
 } // namespace rendering

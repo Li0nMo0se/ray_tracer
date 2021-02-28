@@ -4,7 +4,7 @@
 
 #include "camera.hh"
 #include "scene.hh"
-#include "vector.hh"
+#include "color.hh"
 
 namespace rendering
 {
@@ -21,6 +21,6 @@ class Engine
     Engine(const Engine&) = delete;
 
   private:
-    static void cast_ray(const space::Ray& ray, const scene::Scene& scene);
+    static color::Color3 cast_ray(const space::Ray& ray, const scene::Scene& scene);
 };
 } // namespace rendering

@@ -12,8 +12,10 @@ Image::Image(const unsigned int width, const unsigned int height)
     : width_(width)
     , height_(height)
     // Avoid overflow with the cast
-    , data_(new pixel_t[static_cast<size_t>(width_) * height_])
+    , data_(new color::Color3[static_cast<size_t>(width_) * height_])
 {
+    for (unsigned int i = 0; i < width_ * height_; i++)
+        data_.get()[i] = color::Color3({0, 0, 255});
 }
 
 void Image::save(const std::string filename) const
@@ -36,12 +38,18 @@ void Image::save(const std::string filename) const
     {
         for (size_t x = 0; x < width_; x++)
         {
-            pixel_t curr_pixel = data_.get()[y * width_ + x];
-            of << curr_pixel.r << curr_pixel.g << curr_pixel.b;
+            const color::Color3& curr_pixel = data_.get()[y * width_ + x];
+            of << curr_pixel[0] << curr_pixel[1] << curr_pixel[2];
         }
     }
 
     of.close();
+}
+
+
+color::Color3& Image::operator()(const unsigned int y, const unsigned int x)
+{
+    return data_.get()[y * width_ + x];
 }
 
 } // namespace image
