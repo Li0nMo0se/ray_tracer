@@ -4,37 +4,52 @@
 #include "ray.hh"
 #include "uniform_texture.hh"
 #include "vector.hh"
+#include "sphere.hh"
+#include "scene.hh"
+#include "engine.hh"
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
-using namespace space;
-
-int main()
+int main(int argc, char *argv[])
 {
-    Vector3 v({1, 2, 3});
-    v *= 2;
-    std::cout << v << std::endl;
-    auto v2 = v + v;
-    std::cout << v2 << std::endl;
-    v += v;
-    std::cout << v << std::endl;
-    v -= v;
-    std::cout << v << std::endl;
+    if (argc != 4)
+    {
+        std::cerr << "Usage: " << argv[0] << " filname width height" << std::endl;
+        return 1;
+    }
 
-    Vector3 v3({1, 2, 3});
-    float res = v3.dot(v3);
-    std::cout << res << " = " << 14 << std::endl;
+    const space::Point3 origin({0, 0, 0});
+    const space::Vector3 y_axis({0, 1, 0});
+    const space::Vector3 z_axis({0, 0, 1});
+    const scene::Camera camera(origin, y_axis, z_axis, 1.f, 45.f, 45.f);
 
-    Vector3 v5({-3, 4, 3});
-    std::cout << v3 << " ^ " << v5 << " = ";
-    v3 = cross_product(v3, v5);
-    std::cout << v3 << std::endl;
+    const auto light = std::make_shared<scene::PointLight>(space::Ray(origin, y_axis)); // Useles light for now
 
-    v3 = v5;
-    std::cout << v3 << " = " << v5 << std::endl;
+    // Object
+    const color::Color3 color_obj({0,0,255});
+    scene::TextureMaterial* const texture =
+        new scene::UniformTexture(color_obj, 1, 1, 1);
+    // Sphere position
+    const space::Point3 sphere1_pos({5, 5, 0});
 
-    v3 = 2 * v5;
-    image::Image im(200, 200);
-    im.save("hello.ppn");
+    const auto sphere1 = std::make_shared<scene::Sphere>(sphere1_pos, 1, texture);
+
+    const scene::Scene scene(camera, {sphere1}, {light});
+
+    const std::string filename(argv[1]);
+
+    std::istringstream width_stream(argv[2]);
+    unsigned int width;
+    width_stream >> width;
+
+    std::istringstream height_stream(argv[3]);
+    unsigned int height; 
+    height_stream >> height;
+
+
+    rendering::Engine::render(filename, width, height, scene);
+
+    return 0;
 }
