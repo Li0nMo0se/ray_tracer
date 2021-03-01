@@ -26,7 +26,7 @@ class Object
 
     virtual space::Vector3 get_norm(const space::Point3& p) const = 0;
 
-    const TextureMaterial& get_texture() { return *texture_; }
+    const TextureMaterial& get_texture() const { return *texture_; }
 
   protected:
     space::Point3 origin_;

@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     const space::Vector3 z_axis({0, 0, 1});
     const scene::Camera camera(origin, y_axis, z_axis, 1.f, M_PI / 4.f, M_PI / 4.f);
 
-    const auto light = std::make_shared<scene::PointLight>(space::Ray(origin, y_axis)); // Useles light for now
+    const auto light = std::make_shared<scene::PointLight>(space::Point3({1, 1, 1}), 0.5f); // Useles light for now
 
     // Object
     const color::Color3 blue({0,0,255});

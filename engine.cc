@@ -80,9 +80,32 @@ color::Color3 Engine::cast_ray(const space::Ray& ray, const scene::Scene& scene)
         }
     }
     if (intersected_obj)
-        return intersected_obj->get_texture().get_color(intersection);
+        return get_color(scene.lights_, *intersected_obj, intersection);
     else // No intersection
         return color::black;
+}
+
+color::Color3 Engine::get_color(const scene::Scene::lights_t& lights,
+                                const scene::Object& obj,
+                                const space::Point3& intersection)
+{
+    // Normale of the object at the intersection point
+    const space::Vector3& normale = obj.get_norm(intersection);
+
+    const scene::TextureMaterial& texture = obj.get_texture();
+    const float kd = texture.get_kd(intersection);
+    const color::Color3 obj_color = texture.get_color(intersection);
+
+    color::Color3 color({0, 0, 0});
+
+    for (const std::shared_ptr<scene::Light>& light : lights)
+    {
+        const space::Vector3 L = light->origin_get() - intersection;
+        const float intensity = light->intensity_get();
+        const float coeff = kd * normale.dot(L) * intensity;
+        color += color::color_multiplication(obj_color, coeff);
+    }
+    return color;
 }
 
 } // namespace rendering
