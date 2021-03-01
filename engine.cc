@@ -31,8 +31,8 @@ void Engine::render(const std::string& filename,
     // P is the projection of `C` on the image plan
     const space::Point3 p = camera.origin_ + camera.z_axis_ * camera.z_min_;
     // Find the very top left point of the image in the 3D world
-    space::Point3 top_left = p - (width / 2 * unit_x * camera.x_axis_) +
-                             (height / 2 * unit_y * camera.y_axis_);
+    space::Point3 top_left = p - (width / 2 * camera.x_axis_) +
+                             (height / 2 * camera.y_axis_);
     // Find the center of the top left pixel
     top_left = top_left + (unit_x / 2 * camera.x_axis_) -
                (unit_y / 2 * camera.y_axis_);
@@ -47,17 +47,17 @@ void Engine::render(const std::string& filename,
     {
         for (unsigned int x = 0; x < resolution_width; ++x)
         {
-            // Move to next right pixel
-            curr_pixel += unit_x * camera.x_axis_;
             // Ray computation
             const space::Vector3 ray_direction = curr_pixel - camera.origin_;
             color::Color3 pixel_color = cast_ray(space::Ray(camera.origin_, ray_direction), scene);
             im(y, x) = pixel_color;
+            // Move to next right pixel
+            curr_pixel += unit_x * camera.x_axis_;
         }
         // Move to row below
         curr_pixel -= unit_y * camera.y_axis_;
         // Go back to left column
-        curr_pixel -= unit_x * width * camera.x_axis_;
+        curr_pixel -= width * camera.x_axis_;
     }
 
     im.save(filename);
@@ -66,13 +66,13 @@ void Engine::render(const std::string& filename,
 color::Color3 Engine::cast_ray(const space::Ray& ray, const scene::Scene& scene)
 {
     // t such as P = O + tD
-    float t = -1.f; // t can't be negative
+    float t = 0.f;
     space::Point3 intersection;
     std::shared_ptr<scene::Object> intersected_obj = nullptr;
     for (const std::shared_ptr<scene::Object>& obj : scene.objects_)
     {
         const std::optional<float> t_intersection = obj->intersect(ray);
-        if (t_intersection && t_intersection.value() < t)
+        if (t_intersection && (!intersected_obj || t_intersection.value() < t))
         {
             t = t_intersection.value();
             intersection = ray.origin_get() + t * ray.direction_get();

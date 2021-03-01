@@ -12,6 +12,8 @@
 #include <string>
 #include <sstream>
 
+# define M_PI 3.14159265358979323846  /* pi */
+
 int main(int argc, char *argv[])
 {
     if (argc != 4)
@@ -23,7 +25,7 @@ int main(int argc, char *argv[])
     const space::Point3 origin({0, 0, 0});
     const space::Vector3 y_axis({0, 1, 0});
     const space::Vector3 z_axis({0, 0, 1});
-    const scene::Camera camera(origin, y_axis, z_axis, 1.f, 45.f, 45.f);
+    const scene::Camera camera(origin, y_axis, z_axis, 1.f, M_PI / 4.f, M_PI / 4.f);
 
     const auto light = std::make_shared<scene::PointLight>(space::Ray(origin, y_axis)); // Useles light for now
 
@@ -32,9 +34,9 @@ int main(int argc, char *argv[])
     scene::TextureMaterial* const texture =
         new scene::UniformTexture(color_obj, 1, 1, 1);
     // Sphere position
-    const space::Point3 sphere1_pos({5, 5, 0});
+    const space::Point3 sphere1_pos({0, 0, 5});
 
-    const auto sphere1 = std::make_shared<scene::Sphere>(sphere1_pos, 1, texture);
+    const auto sphere1 = std::make_shared<scene::Sphere>(sphere1_pos, 2, texture);
 
     const scene::Scene scene(camera, {sphere1}, {light});
 
@@ -45,7 +47,7 @@ int main(int argc, char *argv[])
     width_stream >> width;
 
     std::istringstream height_stream(argv[3]);
-    unsigned int height; 
+    unsigned int height;
     height_stream >> height;
 
 

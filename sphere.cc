@@ -20,8 +20,8 @@ static std::optional<float> solve_quadratic(const float a, const float b, const 
         return (-b / (2*a));
 
     // else delta > 0
-    float t0 = (-b + std::sqrt(delta) / (2 * a));
-    float t1 = (-b - std::sqrt(delta) / (2 * a));
+    float t0 = (-b + std::sqrt(delta)) / (2 * a);
+    float t1 = (-b - std::sqrt(delta)) / (2 * a);
 
     if (t0 < 0 && t1 < 0)
         return std::nullopt;

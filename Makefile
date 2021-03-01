@@ -6,7 +6,8 @@ BIN=raytracer
 OBJ_FILES = $(CC_FILES:.cc=.o)
 
 # CXX_FLAGS += -Wall -Wextra -Werror -O3 -g -std=c++17
-CXX_FLAGS += -Wall -Wextra -O3 -march=native -g -std=c++2a
+CXX_FLAGS += -Wall -Wextra -O3 -march=native -std=c++2a
+# CXX_FLAGS += -Wall -Wextra -g -std=c++2a
 LDXX_FLAGS =
 
 all: $(OBJ_FILES)
