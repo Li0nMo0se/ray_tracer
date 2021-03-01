@@ -11,6 +11,10 @@ template <unsigned int size, typename T = float>
 class Vector
 {
   protected:
+    using iterator = typename std::array<T, size>::iterator;
+    iterator begin() { return vect_.begin(); }
+    iterator end() { return vect_.end(); };
+
     std::array<T, size> vect_;
 
   public:
@@ -23,10 +27,6 @@ class Vector
 
     Vector& operator=(const Vector&) = default;
     Vector(const Vector&) = default;
-
-    using iterator = typename std::array<T, size>::iterator;
-    iterator begin() { return vect_.begin(); }
-    iterator end() { return vect_.end(); };
 
     using const_iterator = typename std::array<T, size>::const_iterator;
     const_iterator begin() const { return vect_.cbegin(); }

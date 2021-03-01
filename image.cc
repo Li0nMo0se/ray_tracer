@@ -39,7 +39,14 @@ void Image::save(const std::string filename) const
         for (size_t x = 0; x < width_; x++)
         {
             const color::Color3& curr_pixel = data_.get()[y * width_ + x];
-            of << curr_pixel[0] << curr_pixel[1] << curr_pixel[2];
+            const unsigned char r = curr_pixel[0] < 255.f ?
+                static_cast<unsigned char>(curr_pixel[0]) : 255;
+            const unsigned char g = curr_pixel[1] < 255.f ?
+                static_cast<unsigned char>(curr_pixel[1]) : 255;
+            const unsigned char b = curr_pixel[2] < 255.f ?
+                static_cast<unsigned char>(curr_pixel[2]) : 255;
+
+            of << r << g << b;
         }
     }
 

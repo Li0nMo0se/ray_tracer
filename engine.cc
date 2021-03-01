@@ -100,10 +100,17 @@ color::Color3 Engine::get_color(const scene::Scene::lights_t& lights,
 
     for (const std::shared_ptr<scene::Light>& light : lights)
     {
+        // Compute the diffuse light
         const space::Vector3 L = light->origin_get() - intersection;
         const float intensity = light->intensity_get();
         const float coeff = kd * normale.dot(L) * intensity;
-        color += color::color_multiplication(obj_color, coeff);
+        // TODO maybe color in float
+        color += obj_color * coeff;
+
+        // Compute the specular light
+        // Compute the reflected vector
+        const space::Vector3 S = intersection - normale * 2 * intersection.dot(normale);
+
     }
     return color;
 }
