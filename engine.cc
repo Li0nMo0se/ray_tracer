@@ -69,7 +69,8 @@ color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
     std::shared_ptr<scene::Object> intersected_obj = nullptr;
 
     const space::Ray ray(camera.origin_, ray_direction);
-    std::optional<float> t_intersected = cast_ray(ray, scene, intersected_obj);
+    std::optional<float> t_intersected =
+        cast_ray(ray, scene.objects_, intersected_obj);
 
     if (t_intersected)
     {
@@ -82,14 +83,14 @@ color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
 
 std::optional<float>
 Engine::cast_ray(const space::Ray& ray,
-                 const scene::Scene& scene,
+                 const std::vector<std::shared_ptr<scene::Object>>& objs,
                  std::shared_ptr<scene::Object>& intersected_obj)
 {
     intersected_obj = nullptr;
     // t such as P = O + tD
     float t = 0.f;
     space::Point3 intersection;
-    for (const std::shared_ptr<scene::Object>& obj : scene.objects_)
+    for (const std::shared_ptr<scene::Object>& obj : objs)
     {
         const std::optional<float> t_intersection = obj->intersect(ray);
         if (t_intersection && (!intersected_obj || t_intersection.value() < t))
@@ -109,8 +110,8 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
                                        const scene::Object& obj,
                                        const space::Point3& intersection)
 {
-    // Normale of the object at the intersection point
-    const space::Vector3& normale = obj.get_norm(intersection);
+    // normal of the object at the intersection point
+    const space::Vector3& normal = obj.get_norm(intersection);
 
     const scene::TextureMaterial& texture = obj.get_texture();
     const float kd = texture.get_kd(intersection);
@@ -123,35 +124,39 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
     for (const std::shared_ptr<scene::Light>& light : scene.lights_)
     {
         // Compute shadow
-        // if (check_shadow(scene, light, intersection))
-        // return color::black;
+        if (check_shadow(scene, light, intersection))
+            return color::black;
 
         const space::Vector3 L = light->origin_get() - intersection;
         const float intensity = light->intensity_get();
         // Compute the diffuse light
-        const float coeff_diffuse = kd * normale.dot(L) * intensity;
+        const float coeff_diffuse = kd * normal.dot(L) * intensity;
         color += obj_color * coeff_diffuse;
 
         // Compute the specular light
         // Compute the reflected vector
         const space::Vector3 S =
-            intersection - normale * 2 * intersection.dot(normale);
+            intersection - normal * 2 * intersection.dot(normal);
         const float coeff_specular = ks * intensity * powf(S.dot(L), ns);
         color += coeff_specular;
     }
     return color;
 }
 
-/*
-static bool check_shadow(const scene::Scene& scene,
-                         const std::shared_ptr<scene::Light>& light,
-                         const space::Point3& intersection)
+bool Engine::check_shadow(const scene::Scene& scene,
+                          const std::shared_ptr<scene::Light>& light,
+                          const space::Point3& intersection)
 {
     space::Ray ray(intersection,
-        (light->origin_get() - intersection).normalized());
+                   (light->origin_get() - intersection).normalized());
 
-    // Cast ray
-    // return true if intersection>
-}*/
+    std::shared_ptr<scene::Object> intersected_obj = nullptr;
+    // Here, we might not want to compute t but only know whether there's a
+    // intersection
+    const std::optional<float> t_intersected =
+        cast_ray(ray, scene.objects_, intersected_obj);
 
+    // Object between the light and the intersection point
+    return t_intersected.has_value();
+}
 } // namespace rendering

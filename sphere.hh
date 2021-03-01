@@ -18,6 +18,7 @@ class Sphere : public Object
 
     virtual space::Vector3 get_norm(const space::Point3& intersection) const override;
 
+  private:
     const float radius_;
 };
 } //r namespace scene

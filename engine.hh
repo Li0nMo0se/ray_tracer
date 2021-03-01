@@ -28,14 +28,14 @@ class Engine
 
     static std::optional<float>
     cast_ray(const space::Ray& ray,
-             const scene::Scene& scene,
+             const std::vector<std::shared_ptr<scene::Object>>& objs,
              std::shared_ptr<scene::Object>& intersected_obj);
 
     static color::Color3 get_pixel_color(const space::Point3& curr_pixel,
                                          const scene::Scene& scene);
 
-    /*
-      static bool check_shadow(const std::shared_ptr<scene::Light>& light,
-                               const space::Point3& intersection);*/
+    static bool check_shadow(const scene::Scene& scene,
+                             const std::shared_ptr<scene::Light>& light,
+                             const space::Point3& intersection);
 };
 } // namespace rendering
