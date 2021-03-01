@@ -30,15 +30,20 @@ int main(int argc, char *argv[])
     const auto light = std::make_shared<scene::PointLight>(space::Ray(origin, y_axis)); // Useles light for now
 
     // Object
-    const color::Color3 color_obj({0,0,255});
-    scene::TextureMaterial* const texture =
-        new scene::UniformTexture(color_obj, 1, 1, 1);
+    const color::Color3 blue({0,0,255});
+    const color::Color3 red({255,0,0});
+    scene::TextureMaterial* const texture_blue =
+        new scene::UniformTexture(blue, 1, 1, 1);
+    scene::TextureMaterial* const texture_red =
+        new scene::UniformTexture(red, 1, 1, 1);
     // Sphere position
     const space::Point3 sphere1_pos({0, 0, 5});
+    const space::Point3 sphere2_pos({0, 1, 6});
 
-    const auto sphere1 = std::make_shared<scene::Sphere>(sphere1_pos, 2, texture);
+    const auto sphere1 = std::make_shared<scene::Sphere>(sphere1_pos, 1, texture_blue);
+    const auto sphere2 = std::make_shared<scene::Sphere>(sphere2_pos, 1, texture_red);
 
-    const scene::Scene scene(camera, {sphere1}, {light});
+    const scene::Scene scene(camera, {sphere1, sphere2}, {light});
 
     const std::string filename(argv[1]);
 
@@ -49,7 +54,6 @@ int main(int argc, char *argv[])
     std::istringstream height_stream(argv[3]);
     unsigned int height;
     height_stream >> height;
-
 
     rendering::Engine::render(filename, width, height, scene);
 
