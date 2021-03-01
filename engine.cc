@@ -31,8 +31,8 @@ void Engine::render(const std::string& filename,
     // P is the projection of `C` on the image plan
     const space::Point3 p = camera.origin_ + camera.z_axis_ * camera.z_min_;
     // Find the very top left point of the image in the 3D world
-    space::Point3 top_left = p - (width / 2 * camera.x_axis_) +
-                             (height / 2 * camera.y_axis_);
+    space::Point3 top_left =
+        p - (width / 2 * camera.x_axis_) + (height / 2 * camera.y_axis_);
     // Find the center of the top left pixel
     top_left = top_left + (unit_x / 2 * camera.x_axis_) -
                (unit_y / 2 * camera.y_axis_);
@@ -48,9 +48,7 @@ void Engine::render(const std::string& filename,
         for (unsigned int x = 0; x < resolution_width; ++x)
         {
             // Ray computation
-            const space::Vector3 ray_direction = curr_pixel - camera.origin_;
-            color::Color3 pixel_color = cast_ray(space::Ray(camera.origin_, ray_direction), scene);
-            im(y, x) = pixel_color;
+            im(y, x) = get_pixel_color(curr_pixel, scene);
             // Move to next right pixel
             curr_pixel += unit_x * camera.x_axis_;
         }
@@ -63,12 +61,34 @@ void Engine::render(const std::string& filename,
     im.save(filename);
 }
 
-color::Color3 Engine::cast_ray(const space::Ray& ray, const scene::Scene& scene)
+color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
+                                      const scene::Scene& scene)
 {
+    const scene::Camera& camera = scene.camera_;
+    const space::Vector3 ray_direction = curr_pixel - camera.origin_;
+    std::shared_ptr<scene::Object> intersected_obj = nullptr;
+
+    const space::Ray ray(camera.origin_, ray_direction);
+    std::optional<float> t_intersected = cast_ray(ray, scene, intersected_obj);
+
+    if (t_intersected)
+    {
+        const space::Point3 intersection =
+            ray.origin_get() + t_intersected.value() * ray.direction_get();
+        return get_object_color(scene, *intersected_obj, intersection);
+    }
+    return color::black;
+}
+
+std::optional<float>
+Engine::cast_ray(const space::Ray& ray,
+                 const scene::Scene& scene,
+                 std::shared_ptr<scene::Object>& intersected_obj)
+{
+    intersected_obj = nullptr;
     // t such as P = O + tD
     float t = 0.f;
     space::Point3 intersection;
-    std::shared_ptr<scene::Object> intersected_obj = nullptr;
     for (const std::shared_ptr<scene::Object>& obj : scene.objects_)
     {
         const std::optional<float> t_intersection = obj->intersect(ray);
@@ -80,14 +100,14 @@ color::Color3 Engine::cast_ray(const space::Ray& ray, const scene::Scene& scene)
         }
     }
     if (intersected_obj)
-        return get_color(scene.lights_, *intersected_obj, intersection);
-    else // No intersection
-        return color::black;
+        return t;
+    else
+        return std::nullopt;
 }
 
-color::Color3 Engine::get_color(const scene::Scene::lights_t& lights,
-                                const scene::Object& obj,
-                                const space::Point3& intersection)
+color::Color3 Engine::get_object_color(const scene::Scene& scene,
+                                       const scene::Object& obj,
+                                       const space::Point3& intersection)
 {
     // Normale of the object at the intersection point
     const space::Vector3& normale = obj.get_norm(intersection);
@@ -100,8 +120,12 @@ color::Color3 Engine::get_color(const scene::Scene::lights_t& lights,
 
     color::Color3 color({0, 0, 0});
 
-    for (const std::shared_ptr<scene::Light>& light : lights)
+    for (const std::shared_ptr<scene::Light>& light : scene.lights_)
     {
+        // Compute shadow
+        // if (check_shadow(scene, light, intersection))
+        // return color::black;
+
         const space::Vector3 L = light->origin_get() - intersection;
         const float intensity = light->intensity_get();
         // Compute the diffuse light
@@ -117,5 +141,17 @@ color::Color3 Engine::get_color(const scene::Scene::lights_t& lights,
     }
     return color;
 }
+
+/*
+static bool check_shadow(const scene::Scene& scene,
+                         const std::shared_ptr<scene::Light>& light,
+                         const space::Point3& intersection)
+{
+    space::Ray ray(intersection,
+        (light->origin_get() - intersection).normalized());
+
+    // Cast ray
+    // return true if intersection>
+}*/
 
 } // namespace rendering
