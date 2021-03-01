@@ -4,6 +4,9 @@
 
 namespace space
 {
+
+constexpr float T_MIN = 0.0001f;
+
 class Ray
 {
   public:
