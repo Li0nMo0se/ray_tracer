@@ -52,6 +52,22 @@ Vector<size, T>::operator+(const Vector<size, T>& rhs) const
 }
 
 template <unsigned int size, typename T>
+inline Vector<size, T>& Vector<size, T>::operator+=(const T val)
+{
+    for (unsigned int i = 0; i < size; i++)
+        this->vect_[i] += val;
+    return *this;
+}
+
+template <unsigned int size, typename T>
+inline Vector<size, T> Vector<size, T>::operator+(const T val) const
+{
+    Vector<size, T> new_vect = *this;
+    new_vect += val;
+    return new_vect;
+}
+
+template <unsigned int size, typename T>
 inline Vector<size, T>& Vector<size, T>::operator-=(const Vector<size, T>& rhs)
 {
     *this += (rhs * (-1));

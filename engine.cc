@@ -94,23 +94,26 @@ color::Color3 Engine::get_color(const scene::Scene::lights_t& lights,
 
     const scene::TextureMaterial& texture = obj.get_texture();
     const float kd = texture.get_kd(intersection);
+    const float ks = texture.get_ks(intersection);
+    const float ns = texture.get_ns(intersection);
     const color::Color3 obj_color = texture.get_color(intersection);
 
     color::Color3 color({0, 0, 0});
 
     for (const std::shared_ptr<scene::Light>& light : lights)
     {
-        // Compute the diffuse light
         const space::Vector3 L = light->origin_get() - intersection;
         const float intensity = light->intensity_get();
-        const float coeff = kd * normale.dot(L) * intensity;
-        // TODO maybe color in float
-        color += obj_color * coeff;
+        // Compute the diffuse light
+        const float coeff_diffuse = kd * normale.dot(L) * intensity;
+        color += obj_color * coeff_diffuse;
 
         // Compute the specular light
         // Compute the reflected vector
-        const space::Vector3 S = intersection - normale * 2 * intersection.dot(normale);
-
+        const space::Vector3 S =
+            intersection - normale * 2 * intersection.dot(normale);
+        const float coeff_specular = ks * intensity * powf(S.dot(L), ns);
+        color += coeff_specular;
     }
     return color;
 }

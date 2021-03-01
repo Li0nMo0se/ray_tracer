@@ -41,6 +41,9 @@ class Vector
     inline Vector& operator+=(const Vector& rhs);
     inline Vector operator+(const Vector& rhs) const;
 
+    inline Vector& operator+=(const T val);
+    inline Vector operator+(const T val) const;
+
     inline Vector& operator-=(const Vector& rhs);
     inline Vector operator-(const Vector& rhs) const;
 

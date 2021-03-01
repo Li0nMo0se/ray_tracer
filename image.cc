@@ -18,6 +18,15 @@ Image::Image(const unsigned int width, const unsigned int height)
         data_.get()[i] = color::Color3({0, 0, 255});
 }
 
+static unsigned char get_color_with_boundary(const float val)
+{
+    if (val < 0.f)
+        return 0;
+    if (val > 255.f)
+        return 255;
+    return static_cast<unsigned char>(val);
+}
+
 void Image::save(const std::string filename) const
 {
     std::ofstream of(filename, std::ios_base::out | std::ios_base::binary);
@@ -39,12 +48,9 @@ void Image::save(const std::string filename) const
         for (size_t x = 0; x < width_; x++)
         {
             const color::Color3& curr_pixel = data_.get()[y * width_ + x];
-            const unsigned char r = curr_pixel[0] < 255.f ?
-                static_cast<unsigned char>(curr_pixel[0]) : 255;
-            const unsigned char g = curr_pixel[1] < 255.f ?
-                static_cast<unsigned char>(curr_pixel[1]) : 255;
-            const unsigned char b = curr_pixel[2] < 255.f ?
-                static_cast<unsigned char>(curr_pixel[2]) : 255;
+            unsigned char r = get_color_with_boundary(curr_pixel[0]);
+            unsigned char g = get_color_with_boundary(curr_pixel[1]);
+            unsigned char b = get_color_with_boundary(curr_pixel[2]);
 
             of << r << g << b;
         }
@@ -52,7 +58,6 @@ void Image::save(const std::string filename) const
 
     of.close();
 }
-
 
 color::Color3& Image::operator()(const unsigned int y, const unsigned int x)
 {
