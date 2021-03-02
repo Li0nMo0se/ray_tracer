@@ -5,7 +5,7 @@
 namespace space
 {
 
-constexpr float T_MIN = 1e-6;
+constexpr float T_MIN = 1e-5;
 
 class Ray
 {
