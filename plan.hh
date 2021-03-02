@@ -10,7 +10,7 @@ class Plan final : public Object
   public:
     Plan(const space::Point3& origin,
          const space::Vector3& normal,
-         TextureMaterial* const texture);
+         const std::shared_ptr<TextureMaterial>& texture);
     ~Plan() = default;
 
     virtual std::optional<float>
