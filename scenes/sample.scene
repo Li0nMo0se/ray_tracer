@@ -1,0 +1,18 @@
+# This is ignored
+# First declaration must be the camera
+# A vector or a point must be declared this way (x,y,z)
+# Such as Camera origin y_axis z_axis z_min alpha beta
+# alpha/beta in degrees
+Camera (0,0,0) (0,1,0) (0,0,1) 1 45 45
+
+# UniformTexture such as
+# UniformTexture texture_name color kd ks ns
+UniformTexture red (255,0,0) 2 15 1
+
+# Sphere such as
+# Sphere origin radius texture_name
+Sphere (0,0,2) 1 red
+
+# PointLight such as
+# PointLight origin intensity
+PointLight (0,1,0) 1
