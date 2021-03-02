@@ -111,7 +111,7 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
                                        const space::Point3& intersection)
 {
     // normal of the object at the intersection point
-    const space::Vector3& normal = obj.get_norm(intersection);
+    const space::Vector3& normal = obj.normale_get(intersection);
 
     const scene::TextureMaterial& texture = obj.get_texture();
     const float kd = texture.get_kd(intersection);
@@ -151,8 +151,8 @@ bool Engine::check_shadow(const scene::Scene& scene,
                    (light->origin_get() - intersection).normalized());
 
     std::shared_ptr<scene::Object> intersected_obj = nullptr;
-    // Here, we might not want to compute t but only know whether there's a
-    // intersection
+    // TODO: Here, we might not want to compute t but only know whether there's
+    // a intersection
     const std::optional<float> t_intersected =
         cast_ray(ray, scene.objects_, intersected_obj);
 

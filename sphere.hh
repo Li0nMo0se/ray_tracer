@@ -16,9 +16,10 @@ class Sphere : public Object
     virtual std::optional<float>
     intersect(const space::Ray& ray) const override;
 
-    virtual space::Vector3 get_norm(const space::Point3& intersection) const override;
+    virtual space::Vector3
+    normal_get(const space::Point3& intersection) const override;
 
   private:
     const float radius_;
 };
-} //r namespace scene
+} // namespace scene

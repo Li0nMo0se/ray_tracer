@@ -68,7 +68,7 @@ std::optional<float> Sphere::intersect(const space::Ray& ray) const
     return t_res;
 }
 
-space::Vector3 Sphere::get_norm(const space::Point3& intersection) const
+space::Vector3 Sphere::normal_get(const space::Point3& intersection) const
 {
     // p is the intersection point
     return (intersection - origin_).normalized();
