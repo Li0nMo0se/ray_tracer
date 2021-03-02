@@ -111,7 +111,7 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
                                        const space::Point3& intersection)
 {
     // normal of the object at the intersection point
-    const space::Vector3& normal = obj.normale_get(intersection);
+    const space::Vector3& normal = obj.normal_get(intersection);
 
     const scene::TextureMaterial& texture = obj.get_texture();
     const float kd = texture.get_kd(intersection);
