@@ -23,7 +23,8 @@ std::optional<float> Plan::intersect(const space::Ray& ray) const
     // t = ((P0 - O).n) / (D.n)
 
     const float denominator = ray.direction_get().dot(normal_);
-    if (denominator < 1e-6) // Consider as no intersection
+    // Consider as no intersection
+    if (denominator > -1e-6 && denominator < 1e-6)
         return std::nullopt;
 
     const float numerator = (origin_ - ray.origin_get()).dot(normal_);
