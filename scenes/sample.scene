@@ -21,4 +21,3 @@ UniformTexture plan_texture (0,255,255) 1 1 1
 # Plan such as
 # Plan origin normal texture_name
 Plan (0,0,0) (0,1,0) plan_texture
-HELLO
