@@ -24,8 +24,17 @@ int main(int argc, char* argv[])
     ss_height >> height;
 
     parse::Parser parser;
-    const scene::Scene scene = parser.parse_scene(argv[1]);
-    rendering::Engine::render(argv[2], width, height, scene);
+    try
+    {
+        scene::Scene scene = parser.parse_scene(argv[1]);
+        rendering::Engine::render(argv[2], width, height, scene);
+    }
+    catch (const parse::ParseError& e)
+    {
+        std::string str = e.what();
+        std::cerr << str << '\n';
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }

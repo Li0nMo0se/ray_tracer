@@ -1,5 +1,6 @@
 #include "parser.hh"
 #include "camera.hh"
+#include "plan.hh"
 #include "point_light.hh"
 #include "sphere.hh"
 #include "uniform_texture.hh"
@@ -91,6 +92,30 @@ std::shared_ptr<scene::Object> Parser::parse_sphere(const std::string& line)
     return std::make_shared<scene::Sphere>(origin, radius, texture);
 }
 
+std::shared_ptr<scene::Object> Parser::parse_plan(const std::string& line)
+{
+    std::stringstream ss(line);
+    std::string tmp;
+    ss >> tmp; // Plan
+
+    std::string origin_str;
+    ss >> origin_str;
+    space::Vector3 origin = parse_vector(origin_str);
+
+    std::string normal_str;
+    ss >> normal_str;
+    space::Vector3 normal = parse_vector(normal_str);
+
+    std::string texture_name;
+    ss >> texture_name;
+    auto it = textures_.find(texture_name);
+    if (it == textures_.end())
+        throw ParseError("No such texture " + texture_name, nb_line_);
+    std::shared_ptr<scene::TextureMaterial> texture = it->second;
+
+    return std::make_shared<scene::Plan>(origin, normal, texture);
+}
+
 std::shared_ptr<scene::Light> Parser::parse_pointlight(const std::string& line)
 {
     std::stringstream ss(line);
@@ -108,7 +133,7 @@ std::shared_ptr<scene::Light> Parser::parse_pointlight(const std::string& line)
 
 scene::Scene Parser::parse_scene(const std::string filename)
 {
-    nb_line_ = 0;
+    nb_line_ = 1;
     std::ifstream in(filename);
     if (!in)
     {
@@ -120,9 +145,9 @@ scene::Scene Parser::parse_scene(const std::string filename)
     std::string line;
     while (std::getline(in, line))
     {
+        nb_line_++;
         if (!(line.empty() || line[0] == '#'))
             break;
-        nb_line_++;
     }
     scene::Camera camera = parse_camera(line);
     scene::Scene scene(camera);
@@ -145,6 +170,11 @@ scene::Scene Parser::parse_scene(const std::string filename)
             {
                 std::shared_ptr<scene::Light> light = parse_pointlight(line);
                 scene.add_light(light);
+            }
+            else if (curr_token == "Plan")
+            {
+                std::shared_ptr<scene::Object> plan = parse_plan(line);
+                scene.add_object(plan);
             }
             else
                 throw ParseError("Undefined structure", nb_line_);
