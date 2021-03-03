@@ -7,15 +7,15 @@ Camera (0,1,0) (0,1,0) (0,0,1) 1 45 45
 
 # PointLight such as
 # PointLight origin intensity
-PointLight (0,1,0) 1
+PointLight (0,4,5) 1
 
 
-UniformTexture red (255,0,0) 2 15 1
-Sphere (0,1,5) 1 red
-UniformTexture green (0,255,0) 2 15 1
-Sphere (3,1,5) 1 green
-UniformTexture blue (0,0,255) 2 15 1
-Sphere (-2,1,8) 1 blue
+UniformTexture red (255,0,0) 2 2 1
+Sphere (-2,1,5) 1 red
+UniformTexture green (0,255,0) 2 2 1
+Sphere (1,1,5) 1 green
+UniformTexture blue (0,0,255) 2 2 1
+Sphere (3,1,8) 1 blue
 
 # Green for the plan texture
 UniformTexture plan_texture (0,255,0) 1 1 1

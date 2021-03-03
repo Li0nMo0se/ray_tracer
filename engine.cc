@@ -138,7 +138,8 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
         const space::Vector3 S =
             intersection - normal * 2 * intersection.dot(normal);
         const float coeff_specular = ks * intensity * powf(S.dot(L), ns);
-        color += coeff_specular;
+        if (coeff_specular > 0)
+            color += coeff_specular;
     }
     return color;
 }
@@ -147,16 +148,24 @@ bool Engine::check_shadow(const scene::Scene& scene,
                           const std::shared_ptr<scene::Light>& light,
                           const space::Point3& intersection)
 {
+    const space::Vector3 vector_to_light = light->origin_get() - intersection;
     space::Ray ray(intersection,
-                   (light->origin_get() - intersection).normalized());
+                   vector_to_light.normalized());
 
+    const float distance_to_light = vector_to_light.length();
     std::shared_ptr<scene::Object> intersected_obj = nullptr;
     // TODO: Here, we might not want to compute t but only know whether there's
     // a intersection
     const std::optional<float> t_intersected =
         cast_ray(ray, scene.objects_, intersected_obj);
 
-    // Object between the light and the intersection point
-    return t_intersected.has_value();
+    if (!t_intersected)
+        return false;
+
+    const float distance_to_intersection =
+        (ray.origin_get() + t_intersected.value() * ray.direction_get()).length();
+
+    // Is the intersection of the ray between the intersected point and the light
+    return distance_to_intersection < distance_to_light;
 }
 } // namespace rendering
