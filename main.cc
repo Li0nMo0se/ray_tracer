@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     if (argc != 5)
     {
         std::cerr << "Usage: " << argv[0]
-                  << "file.scene outputfile.ppn width height\n";
+                  << "file.scene outputfile.ppm width height\n";
         return EXIT_FAILURE;
     }
     unsigned int width;
