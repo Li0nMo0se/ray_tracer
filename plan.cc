@@ -2,6 +2,8 @@
 
 namespace scene
 {
+constexpr float epsilone = 1e-6;
+
 Plan::Plan(const space::Point3& origin,
            const space::Vector3& normal,
            const std::shared_ptr<TextureMaterial>& texture)
@@ -24,7 +26,7 @@ std::optional<float> Plan::intersect(const space::Ray& ray) const
 
     const float denominator = ray.direction_get().dot(normal_);
     // Consider as no intersection
-    if (denominator > -1e-6 && denominator < 1e-6)
+    if (std::abs(denominator) < epsilone)
         return std::nullopt;
 
     const float numerator = (origin_ - ray.origin_get()).dot(normal_);
