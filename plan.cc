@@ -8,7 +8,7 @@ Plan::Plan(const space::Point3& origin,
            const space::Vector3& normal,
            const std::shared_ptr<TextureMaterial>& texture)
     : Object(origin, texture)
-    , normal_(normal)
+    , normal_(normal.normalized())
 {
 }
 
