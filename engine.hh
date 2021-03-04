@@ -26,9 +26,12 @@ class Engine
                                           const scene::Object& obj,
                                           const space::Point3& intersection);
 
+    static color::Color3 cast_ray_color(const space::Ray& ray,
+                                        const scene::Scene& scene);
+
     static std::optional<float>
     cast_ray(const space::Ray& ray,
-             const std::vector<std::shared_ptr<scene::Object>>& objs,
+             const scene::Scene& scene,
              std::shared_ptr<scene::Object>& intersected_obj);
 
     static color::Color3 get_pixel_color(const space::Point3& curr_pixel,
@@ -37,5 +40,7 @@ class Engine
     static bool check_shadow(const scene::Scene& scene,
                              const std::shared_ptr<scene::Light>& light,
                              const space::Point3& intersection);
+
+    inline static float diffusion_attenuation(const float distance);
 };
 } // namespace rendering
