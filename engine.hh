@@ -41,6 +41,11 @@ class Engine
                              const std::shared_ptr<scene::Light>& light,
                              const space::Point3& intersection);
 
-    inline static float diffusion_attenuation(const float distance);
+    inline static float distance_attenuation(const float distance);
+
+    static constexpr float intersection_correction_ratio = 1.f / 10.f;
+    inline static space::Vector3
+    auto_intersection_correction(const space::Vector3& intersection,
+                                 const space::Vector3& normal);
 };
 } // namespace rendering

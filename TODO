@@ -1,4 +1,2 @@
-std::shared_ptr to std::unique_ptr pour Lights and Objects
-overload T * Vector<size, T> (commutatif)
-use array instead of vector
-color_multiplication move to other file
+ASK: auto intersection correction in the case of shadow and reflection
+check intersection with itself if needed and use epsilon to go back

@@ -71,8 +71,11 @@ color::Color3 Engine::cast_ray_color(const space::Ray& ray,
 
     if (t_intersected)
     {
-        const space::Point3 intersection =
+        space::Point3 intersection =
             ray.origin_get() + t_intersected.value() * ray.direction_get();
+        intersection = auto_intersection_correction(
+            intersection,
+            intersected_obj->normal_get(intersection));
         return get_object_color(scene, *intersected_obj, intersection);
     }
     return color::black;
@@ -113,9 +116,16 @@ Engine::cast_ray(const space::Ray& ray,
         return std::nullopt;
 }
 
-inline float Engine::diffusion_attenuation(const float distance)
+inline float Engine::distance_attenuation(const float distance)
 {
     return 1.f / distance;
+}
+
+inline space::Vector3
+Engine::auto_intersection_correction(const space::Vector3& intersection,
+                                     const space::Vector3& normal)
+{
+    return intersection + normal * intersection_correction_ratio;
 }
 
 color::Color3 Engine::get_object_color(const scene::Scene& scene,
@@ -140,14 +150,14 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
     for (const std::shared_ptr<scene::Light>& light : scene.lights_)
     {
         // Compute shadow (+ normal to avoid intersecting with yourself)
-        if (check_shadow(scene, light, intersection + normal))
-            return color::black;
+        if (check_shadow(scene, light, intersection))
+            continue;
 
         const space::Vector3 L = light->origin_get() - intersection;
         const float intensity = light->intensity_get();
         // Compute the diffuse light
         const float coeff_diffuse =
-            kd * normal.dot(L) * intensity * diffusion_attenuation(L.length());
+            kd * normal.dot(L) * intensity * distance_attenuation(L.length());
         color += obj_color * coeff_diffuse;
 
         // Compute the specular light
@@ -182,12 +192,10 @@ bool Engine::check_shadow(const scene::Scene& scene,
     if (!t_intersected)
         return false;
 
-    const float distance_to_intersection =
-        (ray.origin_get() + t_intersected.value() * ray.direction_get())
-            .length();
-
     // Is the intersection of the ray between the intersected point and the
     // light
-    return distance_to_intersection < distance_to_light;
+    // t_intersected is the distance between the intersected point and the
+    // origin (that's the definition of a ray)
+    return t_intersected.value() < distance_to_light;
 }
 } // namespace rendering
