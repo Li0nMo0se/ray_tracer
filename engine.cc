@@ -10,7 +10,8 @@ void Engine::render(const std::string& filename,
                     const unsigned int resolution_width,
                     const unsigned int resolution_height,
                     const scene::Scene& scene,
-                    const unsigned int aliasing_level)
+                    const unsigned int aliasing_level,
+                    const unsigned int reflection_max_depth)
 {
     // Create Image
     image::Image im(resolution_width, resolution_height);
@@ -53,7 +54,8 @@ void Engine::render(const std::string& filename,
                                        scene,
                                        unit_x,
                                        unit_y,
-                                       aliasing_level);
+                                       aliasing_level,
+                                       reflection_max_depth);
             // Move to next right pixel
             curr_pixel += unit_x * camera.x_axis_;
         }
@@ -70,8 +72,10 @@ color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
                                       const scene::Scene& scene,
                                       const float unit_x,
                                       const float unit_y,
-                                      const unsigned int aliasing_level)
+                                      const unsigned int aliasing_level,
+                                      const unsigned int reflection_max_depth)
 {
+    static constexpr unsigned int reflection_first_depth = 0;
     const scene::Camera& camera = scene.camera_;
 
     // Aliasing, split the current pixel
@@ -95,7 +99,10 @@ color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
                 (curr_inner_pixel - camera.origin_).normalized();
             const space::Ray ray(camera.origin_, ray_direction);
             matrix_aliasing.get()[y * aliasing_level + x] =
-                cast_ray_color(ray, scene);
+                cast_ray_color(ray,
+                               scene,
+                               reflection_first_depth,
+                               reflection_max_depth);
             curr_inner_pixel += aliasing_unit_x * camera.x_axis_;
         }
         curr_inner_pixel -= aliasing_unit_y * camera.y_axis_;
@@ -112,7 +119,9 @@ color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
 }
 
 color::Color3 Engine::cast_ray_color(const space::Ray& ray,
-                                     const scene::Scene& scene)
+                                     const scene::Scene& scene,
+                                     const unsigned int reflection_curr_depth,
+                                     const unsigned int reflection_max_depth)
 {
     std::shared_ptr<scene::Object> intersected_obj = nullptr;
 
@@ -126,7 +135,11 @@ color::Color3 Engine::cast_ray_color(const space::Ray& ray,
         intersection = auto_intersection_correction(
             intersection,
             intersected_obj->normal_get(intersection));
-        return get_object_color(scene, *intersected_obj, intersection);
+        return get_object_color(scene,
+                                *intersected_obj,
+                                intersection,
+                                reflection_curr_depth,
+                                reflection_max_depth);
     }
     return color::black;
 }
@@ -169,7 +182,9 @@ Engine::auto_intersection_correction(const space::Vector3& intersection,
 
 color::Color3 Engine::get_object_color(const scene::Scene& scene,
                                        const scene::Object& obj,
-                                       const space::Point3& intersection)
+                                       const space::Point3& intersection,
+                                       const unsigned int reflection_curr_depth,
+                                       const unsigned int reflection_max_depth)
 {
     // normal of the object at the intersection point
     const space::Vector3& normal = obj.normal_get(intersection);
@@ -205,10 +220,14 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
             color += coeff_specular;
     }
 
-    if (ks > 0.f)
+    if (reflection_curr_depth < reflection_max_depth && ks > 0.f)
     {
         const space::Ray reflected_ray(intersection, S.normalized());
-        color += cast_ray_color(reflected_ray, scene) * ks;
+        color += cast_ray_color(reflected_ray,
+                                scene,
+                                reflection_curr_depth + 1,
+                                reflection_max_depth) *
+                 ks;
     }
 
     return color;
