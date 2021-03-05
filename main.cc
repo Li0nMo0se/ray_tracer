@@ -9,10 +9,10 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc != 5)
+    if (argc != 6)
     {
         std::cerr << "Usage: " << argv[0]
-                  << "file.scene outputfile.ppm width height\n";
+                  << "file.scene outputfile.ppm width height aliasing_level\n";
         return EXIT_FAILURE;
     }
     unsigned int width;
@@ -20,14 +20,22 @@ int main(int argc, char* argv[])
     ss_width >> width;
 
     unsigned int height;
-    std::stringstream ss_height(argv[3]);
+    std::stringstream ss_height(argv[4]);
     ss_height >> height;
+
+    unsigned int aliasing_level;
+    std::stringstream ss_aliasing(argv[5]);
+    ss_aliasing >> aliasing_level;
 
     parse::Parser parser;
     try
     {
         scene::Scene scene = parser.parse_scene(argv[1]);
-        rendering::Engine::render(argv[2], width, height, scene);
+        rendering::Engine::render(argv[2],
+                                  width,
+                                  height,
+                                  scene,
+                                  aliasing_level);
     }
     catch (const parse::ParseError& e)
     {

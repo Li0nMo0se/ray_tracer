@@ -15,7 +15,8 @@ class Engine
     static void render(const std::string& filename,
                        const unsigned int width,
                        const unsigned int height,
-                       const scene::Scene& scene);
+                       const scene::Scene& scene,
+                       const unsigned int aliasing_level);
 
     Engine() = delete;
     Engine& operator=(const Engine&) = delete;
@@ -35,7 +36,10 @@ class Engine
              std::shared_ptr<scene::Object>& intersected_obj);
 
     static color::Color3 get_pixel_color(const space::Point3& curr_pixel,
-                                         const scene::Scene& scene);
+                                         const scene::Scene& scene,
+                                         const float unit_x,
+                                         const float unit_y,
+                                         const unsigned int aliasing_level);
 
     static bool check_shadow(const scene::Scene& scene,
                              const std::shared_ptr<scene::Light>& light,

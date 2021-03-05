@@ -9,7 +9,8 @@ namespace rendering
 void Engine::render(const std::string& filename,
                     const unsigned int resolution_width,
                     const unsigned int resolution_height,
-                    const scene::Scene& scene)
+                    const scene::Scene& scene,
+                    const unsigned int aliasing_level)
 {
     // Create Image
     image::Image im(resolution_width, resolution_height);
@@ -47,8 +48,12 @@ void Engine::render(const std::string& filename,
     {
         for (unsigned int x = 0; x < resolution_width; ++x)
         {
-            // Ray computation
-            im(y, x) = get_pixel_color(curr_pixel, scene);
+            // Ray computation with aliasing
+            im(y, x) = get_pixel_color(curr_pixel,
+                                       scene,
+                                       unit_x,
+                                       unit_y,
+                                       aliasing_level);
             // Move to next right pixel
             curr_pixel += unit_x * camera.x_axis_;
         }
@@ -59,6 +64,51 @@ void Engine::render(const std::string& filename,
     }
 
     im.save(filename);
+}
+
+color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
+                                      const scene::Scene& scene,
+                                      const float unit_x,
+                                      const float unit_y,
+                                      const unsigned int aliasing_level)
+{
+    const scene::Camera& camera = scene.camera_;
+
+    // Aliasing, split the current pixel
+    const float aliasing_unit_x = unit_x / aliasing_level;
+    const float aliasing_unit_y = unit_y / aliasing_level;
+    // top left inner pixel
+    space::Vector3 curr_inner_pixel =
+        curr_pixel - unit_x / 2 * camera.x_axis_ + unit_y / 2 * camera.y_axis_;
+    curr_inner_pixel = curr_inner_pixel + aliasing_unit_x / 2 * camera.x_axis_ -
+                       aliasing_unit_y / 2 * camera.y_axis_;
+    // Aliasing matrix
+    auto matrix_aliasing =
+        std::make_unique<color::Color3[]>(aliasing_level * aliasing_level);
+
+    // Get color of every inner pixels
+    for (unsigned short y = 0; y < aliasing_level; y++)
+    {
+        for (unsigned short x = 0; x < aliasing_level; x++)
+        {
+            const space::Vector3 ray_direction =
+                (curr_inner_pixel - camera.origin_).normalized();
+            const space::Ray ray(camera.origin_, ray_direction);
+            matrix_aliasing.get()[y * aliasing_level + x] =
+                cast_ray_color(ray, scene);
+            curr_inner_pixel += aliasing_unit_x * camera.x_axis_;
+        }
+        curr_inner_pixel -= aliasing_unit_y * camera.y_axis_;
+        curr_inner_pixel -= unit_x * camera.x_axis_;
+    }
+
+    // Mean
+    color::Color3 color = color::black;
+    for (unsigned short i = 0; i < aliasing_level * aliasing_level; i++)
+        color += matrix_aliasing.get()[i];
+    color /= (aliasing_level * aliasing_level);
+
+    return color;
 }
 
 color::Color3 Engine::cast_ray_color(const space::Ray& ray,
@@ -80,17 +130,6 @@ color::Color3 Engine::cast_ray_color(const space::Ray& ray,
     }
     return color::black;
 }
-
-color::Color3 Engine::get_pixel_color(const space::Point3& curr_pixel,
-                                      const scene::Scene& scene)
-{
-    const scene::Camera& camera = scene.camera_;
-    const space::Vector3 ray_direction = curr_pixel - camera.origin_;
-
-    const space::Ray ray(camera.origin_, ray_direction);
-    return cast_ray_color(ray, scene);
-}
-
 std::optional<float>
 Engine::cast_ray(const space::Ray& ray,
                  const scene::Scene& scene,
