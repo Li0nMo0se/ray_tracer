@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     if (argc != 7)
     {
         std::cerr << "Usage: " << argv[0]
-                  << "file.scene outputfile.ppm width height aliasing_level "
+                  << " file.scene outputfile.ppm width height aliasing_level "
                   << "reflection_max_depth\n";
         return EXIT_FAILURE;
     }
