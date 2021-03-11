@@ -6,7 +6,8 @@ namespace scene
 Sphere::Sphere(const space::Point3& origin,
                const float radius,
                const std::shared_ptr<TextureMaterial>& texture)
-    : Object(origin, texture)
+    : Object(texture)
+    , origin_(origin)
     , radius_(radius)
 {
 }

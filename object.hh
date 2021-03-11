@@ -11,10 +11,8 @@ namespace scene
 class Object
 {
   public:
-    Object(const space::Point3& origin,
-           const std::shared_ptr<TextureMaterial>& texture)
-        : origin_(origin)
-        , texture_(texture)
+    Object(const std::shared_ptr<TextureMaterial>& texture)
+        : texture_(texture)
     {
     }
 
@@ -28,7 +26,6 @@ class Object
     const TextureMaterial& get_texture() const { return *texture_; }
 
   protected:
-    space::Point3 origin_;
     std::shared_ptr<TextureMaterial> texture_;
 };
 } // namespace scene

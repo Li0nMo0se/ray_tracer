@@ -20,6 +20,7 @@ class Sphere : public Object
     normal_get(const space::Point3& intersection) const override;
 
   private:
+    const space::Point3 origin_;
     const float radius_;
 };
 } // namespace scene

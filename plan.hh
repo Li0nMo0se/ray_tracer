@@ -19,6 +19,7 @@ class Plan final : public Object
     virtual space::Vector3 normal_get(const space::Point3&) const override;
 
   private:
+    const space::Point3 origin_;
     const space::Vector3 normal_;
 };
 } // namespace scene
