@@ -1,12 +1,13 @@
 #include <cmath>
+#include <cstring>
 
 namespace space
 {
 template <unsigned int size, typename T>
 inline Vector<size, T>& Vector<size, T>::operator*=(T rhs)
 {
-    for (T& elt : this->vect_)
-        elt *= rhs;
+    for (unsigned int i = 0; i < size; i++)
+        vect_[i] *= rhs;
     return *this;
 }
 
@@ -101,8 +102,8 @@ template <unsigned int size, typename T>
 inline T Vector<size, T>::length() const
 {
     T res = 0.0f;
-    for (const T elt : *this)
-        res += elt * elt;
+    for (unsigned int i = 0; i < size; i++)
+        res += vect_[i] * vect_[i];
     return std::sqrt(res);
 }
 
@@ -117,7 +118,7 @@ inline Vector<size, T> Vector<size, T>::normalized() const
 {
     Vector v;
     // Copy coordinates
-    v.vect_ = this->vect_;
+    std::memcpy(v.vect_, this->vect_, sizeof(T) * size);
     v.normalize();
     return v;
 }

@@ -17,7 +17,7 @@ space::Vector3 Parser::parse_vector(const std::string& vector)
     float x, y, z;
     // Not accurate
     sscanf(vector.c_str(), "(%f,%f,%f)", &x, &y, &z);
-    return space::Vector3({x, y, z});
+    return space::Vector3(x, y, z);
 }
 /* Parse a line which describe the camera */
 scene::Camera Parser::parse_camera(const std::string& line)

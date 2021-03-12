@@ -195,7 +195,7 @@ color::Color3 Engine::get_object_color(const scene::Scene& scene,
     const float ns = texture.get_ns(intersection);
     const color::Color3 obj_color = texture.get_color(intersection);
 
-    color::Color3 color({0, 0, 0});
+    color::Color3 color(0.f, 0.f, 0.f);
 
     // Compute the reflected vector
     const space::Vector3 S =

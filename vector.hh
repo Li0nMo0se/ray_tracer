@@ -11,26 +11,21 @@ template <unsigned int size, typename T = float>
 class Vector
 {
   protected:
-    using iterator = typename std::array<T, size>::iterator;
-    iterator begin() { return vect_.begin(); }
-    iterator end() { return vect_.end(); };
-
-    std::array<T, size> vect_;
+    T vect_[size];
 
   public:
-    Vector(const std::array<T, size>& values)
-        : vect_(values)
+    template <typename... Ts>
+    Vector(Ts... args)
+        : vect_{args...}
     {
+        static_assert(sizeof...(Ts) == size,
+                      "Vector constructor: wrong number of arguments");
     }
 
     Vector() = default;
 
     Vector& operator=(const Vector&) = default;
     Vector(const Vector&) = default;
-
-    using const_iterator = typename std::array<T, size>::const_iterator;
-    const_iterator begin() const { return vect_.cbegin(); }
-    const_iterator end() const { return vect_.cend(); }
 
     inline Vector& operator*=(T rhs);
     inline Vector operator*(T rhs) const;
@@ -63,20 +58,22 @@ class Vector
 
     friend Vector<3, float> cross_product(const Vector<3, float>& lhs,
                                           const Vector<3, float>& rhs);
+
+    template <unsigned int _size, typename _T>
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const Vector<_size, _T>& vect);
 };
 
 template <unsigned int size, typename T = float>
 inline std::ostream& operator<<(std::ostream& os, const Vector<size, T>& vect)
 {
     os << "(";
-    typename Vector<size, T>::const_iterator it = vect.begin();
-    if (it != vect.end())
-        os << *it;
-    it++;
-    for (; it < vect.end(); it++)
-    {
-        os << "," << *it;
-    }
+    unsigned int i = 0;
+    if (size != 0)
+        os << vect.vect_[i];
+    i++;
+    for (; i < size; i++)
+        os << "," << vect.vect_[i];
 
     os << ")";
     return os;

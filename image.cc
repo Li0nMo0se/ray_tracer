@@ -15,7 +15,7 @@ Image::Image(const unsigned int width, const unsigned int height)
     , data_(new color::Color3[static_cast<size_t>(width_) * height_])
 {
     for (unsigned int i = 0; i < width_ * height_; i++)
-        data_.get()[i] = color::Color3({0, 0, 255});
+        data_.get()[i] = color::Color3(0.f, 0.f, 255.f);
 }
 
 static unsigned char get_color_with_boundary(const float val)

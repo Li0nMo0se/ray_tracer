@@ -58,7 +58,7 @@ static std::optional<space::Vector3> find_solution(const float coeff[3][4])
     const float D3 = det_matrix(d3);
 
     if (D != 0)
-        return space::Vector3({D1 / D, D2 / D, D3 / D});
+        return space::Vector3(D1 / D, D2 / D, D3 / D);
     else // No solution or infinite solution
         return std::nullopt;
 }
