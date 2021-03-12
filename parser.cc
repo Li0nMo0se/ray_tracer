@@ -3,6 +3,7 @@
 #include "plan.hh"
 #include "point_light.hh"
 #include "sphere.hh"
+#include "triangle.hh"
 #include "uniform_texture.hh"
 #include <fstream>
 #include <sstream>
@@ -116,6 +117,34 @@ std::shared_ptr<scene::Object> Parser::parse_plan(const std::string& line)
     return std::make_shared<scene::Plan>(origin, normal, texture);
 }
 
+std::shared_ptr<scene::Object> Parser::parse_triangle(const std::string& line)
+{
+    std::stringstream ss(line);
+    std::string tmp;
+    ss >> tmp; // Triangle
+
+    std::string A_str;
+    ss >> A_str;
+    space::Vector3 A = parse_vector(A_str);
+
+    std::string B_str;
+    ss >> B_str;
+    space::Vector3 B = parse_vector(B_str);
+
+    std::string C_str;
+    ss >> C_str;
+    space::Vector3 C = parse_vector(C_str);
+
+    std::string texture_name;
+    ss >> texture_name;
+    auto it = textures_.find(texture_name);
+    if (it == textures_.end())
+        throw ParseError("No such texture " + texture_name, nb_line_);
+    std::shared_ptr<scene::TextureMaterial> texture = it->second;
+
+    return std::make_shared<scene::Triangle>(A, B, C, texture);
+}
+
 std::shared_ptr<scene::Light> Parser::parse_pointlight(const std::string& line)
 {
     std::stringstream ss(line);
@@ -162,20 +191,13 @@ scene::Scene Parser::parse_scene(const std::string filename)
             if (curr_token == "UniformTexture")
                 parse_texture(line);
             else if (curr_token == "Sphere")
-            {
-                std::shared_ptr<scene::Object> sphere = parse_sphere(line);
-                scene.add_object(sphere);
-            }
+                scene.add_object(parse_sphere(line));
             else if (curr_token == "PointLight")
-            {
-                std::shared_ptr<scene::Light> light = parse_pointlight(line);
-                scene.add_light(light);
-            }
+                scene.add_light(parse_pointlight(line));
             else if (curr_token == "Plan")
-            {
-                std::shared_ptr<scene::Object> plan = parse_plan(line);
-                scene.add_object(plan);
-            }
+                scene.add_object(parse_plan(line));
+            else if (curr_token == "Triangle")
+                scene.add_object(parse_triangle(line));
             else
                 throw ParseError("Undefined structure", nb_line_);
         }

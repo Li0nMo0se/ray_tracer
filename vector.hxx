@@ -122,6 +122,14 @@ inline Vector<size, T> Vector<size, T>::normalized() const
     return v;
 }
 
+template <unsigned int size, typename T>
+template <unsigned int pos>
+inline const T& Vector<size, T>::get() const
+{
+    static_assert(pos < size, "Out of bound get");
+    return this->vect_[pos];
+}
+
 inline Vector3 cross_product(const Vector3& lhs, const Vector3& rhs)
 {
     Vector3 res;

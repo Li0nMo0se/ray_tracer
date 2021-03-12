@@ -16,13 +16,13 @@ Scene::Scene(const Camera& camera,
     lights_ = lights;
 }
 
-void Scene::add_object(const std::shared_ptr<Object>& object)
+void Scene::add_object(std::shared_ptr<Object>&& object)
 {
-    objects_.push_back(object);
+    objects_.emplace_back(object);
 }
 
-void Scene::add_light(const std::shared_ptr<Light>& light)
+void Scene::add_light(std::shared_ptr<Light>&& light)
 {
-    lights_.push_back(light);
+    lights_.emplace_back(light);
 }
 } // namespace scene

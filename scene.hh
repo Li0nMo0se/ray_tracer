@@ -29,8 +29,8 @@ class Scene final
 
     ~Scene() = default;
 
-    void add_object(const std::shared_ptr<Object>& object);
-    void add_light(const std::shared_ptr<Light>& light);
+    void add_object(std::shared_ptr<Object>&& object);
+    void add_light(std::shared_ptr<Light>&& light);
 
     // The engine won't modify the scene anyways
     friend rendering::Engine;
