@@ -13,7 +13,17 @@ Plan::Plan(const space::Point3& origin,
 {
 }
 
-space::Vector3 Plan::normal_get(const space::Point3&) const { return normal_; }
+space::Vector3 Plan::normal_get(const space::Point3& intersection) const
+{
+    // FIXME: normal or -normal according to coming point
+    // if dot product is positive, the angle is lower than pi/2.
+    // which means they point in the same general direction
+    // The normal must be the general opposite direction than the direction
+    // if (intersection.dot(normal_) < 0)
+    // return -normal_;
+
+    return normal_;
+}
 
 std::optional<float> Plan::intersect(const space::Ray& ray) const
 {
