@@ -84,12 +84,6 @@ Vector<size, T>::operator-(const Vector<size, T>& rhs) const
 }
 
 template <unsigned int size, typename T>
-inline const T& Vector<size, T>::operator[](unsigned int i) const
-{
-    return vect_[i];
-}
-
-template <unsigned int size, typename T>
 inline T Vector<size, T>::dot(const Vector<size, T>& rhs) const
 {
     T res = 0.0f;
@@ -114,13 +108,34 @@ inline void Vector<size, T>::normalize()
 }
 
 template <unsigned int size, typename T>
+Vector<size, T>& Vector<size, T>::operator=(const Vector<size, T>& vector)
+{
+    std::memcpy(this->vect_, vector.vect_, sizeof(T) * size);
+    return *this;
+}
+
+template <unsigned int size, typename T>
+Vector<size, T>::Vector(const Vector<size, T>& vector)
+{
+    std::memcpy(this->vect_, vector.vect_, sizeof(T) * size);
+}
+
+template <unsigned int size, typename T>
 inline Vector<size, T> Vector<size, T>::normalized() const
 {
-    Vector v;
+    Vector v = *this;
     // Copy coordinates
-    std::memcpy(v.vect_, this->vect_, sizeof(T) * size);
     v.normalize();
     return v;
+}
+
+template <unsigned int size, typename T>
+inline Vector<size, T> Vector<size, T>::operator-() const
+{
+    Vector<size, T> new_vect = *this;
+    for (unsigned int i = 0; i < size; i++)
+        new_vect.vect_[i] = -(this->vect_[i]);
+    return new_vect;
 }
 
 template <unsigned int size, typename T>

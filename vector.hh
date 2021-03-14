@@ -24,8 +24,8 @@ class Vector
 
     Vector() = default;
 
-    Vector& operator=(const Vector&) = default;
-    Vector(const Vector&) = default;
+    Vector& operator=(const Vector& vector);
+    Vector(const Vector& vector);
 
     inline Vector& operator*=(T rhs);
     inline Vector operator*(T rhs) const;
@@ -42,7 +42,7 @@ class Vector
     inline Vector& operator-=(const Vector& rhs);
     inline Vector operator-(const Vector& rhs) const;
 
-    inline const T& operator[](unsigned int i) const;
+    inline Vector operator-() const;
 
     inline T dot(const Vector& rhs) const;
 

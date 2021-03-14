@@ -48,9 +48,9 @@ void Image::save(const std::string filename) const
         for (size_t x = 0; x < width_; x++)
         {
             const color::Color3& curr_pixel = data_.get()[y * width_ + x];
-            unsigned char r = get_color_with_boundary(curr_pixel[0]);
-            unsigned char g = get_color_with_boundary(curr_pixel[1]);
-            unsigned char b = get_color_with_boundary(curr_pixel[2]);
+            unsigned char r = get_color_with_boundary(curr_pixel.get<0>());
+            unsigned char g = get_color_with_boundary(curr_pixel.get<1>());
+            unsigned char b = get_color_with_boundary(curr_pixel.get<2>());
 
             of << r << g << b;
         }
