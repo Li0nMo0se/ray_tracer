@@ -66,13 +66,14 @@ std::optional<float> Sphere::intersect(const space::Ray& ray) const
     const std::optional<float> t_res = solve_quadratic(a, b, c);
     if (t_res && t_res.value() < space::T_MIN)
         return std::nullopt;
+    // Has intersected
     return t_res;
 }
 
-space::Vector3 Sphere::normal_get(const space::Point3& intersection) const
+space::Vector3 Sphere::normal_get(const space::Ray& intersection) const
 {
     // p is the intersection point
-    return (intersection - origin_).normalized();
+    return (intersection.intersection_get() - origin_).normalized();
 }
 
 } // namespace scene

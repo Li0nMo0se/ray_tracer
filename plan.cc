@@ -10,17 +10,18 @@ Plan::Plan(const space::Point3& origin,
     : Object(texture)
     , origin_(origin)
     , normal_(normal.normalized())
+    , opposite_normal_(-normal_)
 {
 }
 
-space::Vector3 Plan::normal_get(const space::Point3& intersection) const
+space::Vector3 Plan::normal_get(const space::Ray& ray) const
 {
-    // FIXME: normal or -normal according to coming point
     // if dot product is positive, the angle is lower than pi/2.
-    // which means they point in the same general direction
-    // The normal must be the general opposite direction than the direction
-    // if (intersection.dot(normal_) < 0)
-    // return -normal_;
+    // The normal must have an angle greater than pi/2
+    // Thus, the dot product of the ray direction with the normal must
+    // be negative
+    if (ray.direction_get().dot(normal_) > 0)
+        return opposite_normal_;
 
     return normal_;
 }

@@ -13,12 +13,11 @@ class Triangle : public Object
              const space::Point3& C,
              const std::shared_ptr<TextureMaterial>& texture);
 
-    // Return positive t value if intersection
     virtual std::optional<float>
     intersect(const space::Ray& ray) const override;
 
     virtual space::Vector3
-    normal_get(const space::Point3& intersection) const override;
+    normal_get(const space::Ray& intersection) const override;
 
   private:
     const space::Point3 A_;

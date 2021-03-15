@@ -108,7 +108,7 @@ std::optional<float> Triangle::intersect(const space::Ray& ray) const
     return t;
 }
 
-space::Vector3 Triangle::normal_get(const space::Point3&) const
+space::Vector3 Triangle::normal_get(const space::Ray&) const
 {
     // Consider a triangle as a plan to compute its normal
 

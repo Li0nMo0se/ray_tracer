@@ -17,7 +17,7 @@ class Sphere : public Object
     intersect(const space::Ray& ray) const override;
 
     virtual space::Vector3
-    normal_get(const space::Point3& intersection) const override;
+    normal_get(const space::Ray& intersection) const override;
 
   private:
     const space::Point3 origin_;

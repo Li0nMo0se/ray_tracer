@@ -21,7 +21,7 @@ class Object
     // If no intersection return nullopt
     virtual std::optional<float> intersect(const space::Ray& ray) const = 0;
 
-    virtual space::Vector3 normal_get(const space::Point3& p) const = 0;
+    virtual space::Vector3 normal_get(const space::Ray& ray) const = 0;
 
     const TextureMaterial& get_texture() const { return *texture_; }
 
