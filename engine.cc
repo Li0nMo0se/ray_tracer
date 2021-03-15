@@ -151,14 +151,12 @@ Engine::cast_ray(const space::Ray& ray,
     intersected_obj = nullptr;
     // t such as P = O + tD
     float t = 0.f;
-    space::Point3 intersection;
     for (const std::shared_ptr<scene::Object>& obj : scene.objects_)
     {
         const std::optional<float> t_intersection = obj->intersect(ray);
         if (t_intersection && (!intersected_obj || t_intersection.value() < t))
         {
             t = t_intersection.value();
-            intersection = ray.origin_get() + t * ray.direction_get();
             intersected_obj = obj;
         }
     }
