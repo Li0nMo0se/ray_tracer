@@ -10,7 +10,16 @@ Triangle::Triangle(const space::Point3& A,
     , A_(A)
     , B_(B)
     , C_(C)
+    , normal_(compute_normal())
+    , opposite_normal_(-normal_)
 {
+}
+
+space::Vector3 Triangle::compute_normal() const
+{
+    const space::Vector3 AB = B_ - A_;
+    const space::Vector3 AC = C_ - A_;
+    return cross_product(AB, AC).normalized();
 }
 
 static inline float det_matrix(const float matrix[3][3])
@@ -105,13 +114,18 @@ std::optional<float> Triangle::intersect(const space::Ray& ray) const
     // Find t
     // OG = tD i.e t = OG.x / D.x = OG.y / D.y = OG.z / D.z
     const float t = OG.get<0>() / ray_direction.get<0>();
+    if (t < space::T_MIN)
+        return std::nullopt;
     return t;
 }
 
-space::Vector3 Triangle::normal_get(const space::Ray&) const
+space::Vector3 Triangle::normal_get(const space::Ray& ray) const
 {
-    // Consider a triangle as a plan to compute its normal
+    // Consider a triangle as a plan (see plan.cc for more details)
+    // Return normal or -normal according to the ray
+    if (ray.direction_get().dot(normal_) > 0.f)
+        return opposite_normal_;
 
-    // Return normal or -normal according to the intersection
+    return normal_;
 }
 } // namespace scene

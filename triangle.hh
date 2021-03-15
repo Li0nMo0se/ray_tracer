@@ -18,10 +18,15 @@ class Triangle : public Object
 
     virtual space::Vector3
     normal_get(const space::Ray& intersection) const override;
+  
+  private:
+    space::Vector3 compute_normal() const;
 
   private:
     const space::Point3 A_;
     const space::Point3 B_;
     const space::Point3 C_;
+    const space::Vector3 normal_;
+    const space::Vector3 opposite_normal_;
 };
 } // namespace scene

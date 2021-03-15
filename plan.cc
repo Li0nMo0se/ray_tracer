@@ -20,7 +20,7 @@ space::Vector3 Plan::normal_get(const space::Ray& ray) const
     // The normal must have an angle greater than pi/2
     // Thus, the dot product of the ray direction with the normal must
     // be negative
-    if (ray.direction_get().dot(normal_) > 0)
+    if (ray.direction_get().dot(normal_) > 0.f)
         return opposite_normal_;
 
     return normal_;
