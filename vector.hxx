@@ -146,6 +146,14 @@ inline const T& Vector<size, T>::get() const
     return this->vect_[pos];
 }
 
+
+template <unsigned int size, typename T>
+template <unsigned int pos>
+inline void Vector<size, T>::set(const T& val)
+{
+    this->vect_[pos] = val;
+}
+
 inline Vector3 cross_product(const Vector3& lhs, const Vector3& rhs)
 {
     Vector3 res;

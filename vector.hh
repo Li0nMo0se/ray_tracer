@@ -54,6 +54,9 @@ class Vector
     template <unsigned int pos>
     inline const T& get() const;
 
+    template <unsigned int pos>
+    inline void set(const T& val);
+
     virtual ~Vector() = default;
 
     friend Vector<3, float> cross_product(const Vector<3, float>& lhs,
