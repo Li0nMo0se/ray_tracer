@@ -78,26 +78,27 @@ std::optional<float> Triangle::intersect(const space::Ray& ray) const
     float coeff[3][4];
     // Fill coeff
     const space::Vector3& ray_direction = ray.direction_get();
-    coeff[0][3] = ray_direction.get<0>();
-    coeff[1][3] = ray_direction.get<1>();
-    coeff[2][3] = ray_direction.get<2>();
+    coeff[0][3] = ray_direction[0];
+    coeff[1][3] = ray_direction[1];
+    coeff[2][3] = ray_direction[2];
 
     const space::Point3& O = ray.origin_get();
     const space::Vector3 OA_OB_OC[3] = {A_ - O, B_ - O, C_ - O};
     for (int i = 0; i < 3; ++i)
     {
-        coeff[0][i] = OA_OB_OC[i].get<0>();
-        coeff[1][i] = OA_OB_OC[i].get<1>();
-        coeff[2][i] = OA_OB_OC[i].get<2>();
+        coeff[0][i] = OA_OB_OC[i][0];
+        coeff[1][i] = OA_OB_OC[i][1];
+        coeff[2][i] = OA_OB_OC[i][2];
     }
 
     const std::optional<space::Vector3> res = find_solution(coeff);
     if (!res) // No solution found
         return std::nullopt;
     const space::Vector3 res_vect = res.value();
-    const float alpha = res_vect.get<0>();
-    const float beta = res_vect.get<1>();
-    const float gamma = res_vect.get<2>();
+    const float alpha = res_vect[0];
+    const float beta = res_vect[1];
+    const float gamma = res_vect[2];
+
     // Check same sign
     const bool all_positive = alpha >= 0.f && beta >= 0.f && gamma >= 0.f;
     const bool all_negative = alpha <= 0.f && beta <= 0.f && gamma <= 0.f;
@@ -113,7 +114,7 @@ std::optional<float> Triangle::intersect(const space::Ray& ray) const
 
     // Find t
     // OG = tD i.e t = OG.x / D.x = OG.y / D.y = OG.z / D.z
-    const float t = OG.get<0>() / ray_direction.get<0>();
+    const float t = OG[0] / ray_direction[0];
     if (t < space::T_MIN)
         return std::nullopt;
     return t;

@@ -139,19 +139,18 @@ inline Vector<size, T> Vector<size, T>::operator-() const
 }
 
 template <unsigned int size, typename T>
-template <unsigned int pos>
-inline const T& Vector<size, T>::get() const
+inline constexpr const T&
+Vector<size, T>::operator[](const unsigned int pos) const
 {
-    static_assert(pos < size, "Out of bound get");
+    assert(pos < size && "index out of bound");
     return this->vect_[pos];
 }
 
-
 template <unsigned int size, typename T>
-template <unsigned int pos>
-inline void Vector<size, T>::set(const T& val)
+inline constexpr T& Vector<size, T>::operator[](const unsigned int pos)
 {
-    this->vect_[pos] = val;
+    assert(pos < size && "index out of bound");
+    return this->vect_[pos];
 }
 
 inline Vector3 cross_product(const Vector3& lhs, const Vector3& rhs)

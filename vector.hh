@@ -51,11 +51,9 @@ class Vector
     inline void normalize();
     inline Vector normalized() const;
 
-    template <unsigned int pos>
-    inline const T& get() const;
+    inline constexpr const T& operator[](const unsigned int pos) const;
 
-    template <unsigned int pos>
-    inline void set(const T& val);
+    inline constexpr T& operator[](const unsigned int pos);
 
     virtual ~Vector() = default;
 

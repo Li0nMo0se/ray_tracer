@@ -22,29 +22,28 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
     // Then, we can have the diagonal of the cube
     for (const space::Point3& potential : potentials_)
     {
-        min_point.set<0>(std::min(potential.get<0>(), min_point.get<0>()));
-        min_point.set<1>(std::min(potential.get<1>(), min_point.get<1>()));
-        min_point.set<2>(std::min(potential.get<2>(), min_point.get<2>()));
+        min_point[0] = std::min(potential[0], min_point[0]);
+        min_point[1] = std::min(potential[1], min_point[1]);
+        min_point[2] = std::min(potential[2], min_point[2]);
 
-        max_point.set<0>(std::max(potential.get<0>(), max_point.get<0>()));
-        max_point.set<1>(std::max(potential.get<1>(), max_point.get<1>()));
-        max_point.set<2>(std::max(potential.get<2>(), max_point.get<2>()));
+        max_point[0] = std::max(potential[0], max_point[0]);
+        max_point[1] = std::max(potential[1], max_point[1]);
+        max_point[2] = std::max(potential[2], max_point[2]);
     }
     return EvaluationZone{min_point, max_point, step};
 }
 
 void Metaball::marching_cube()
 {
-    for (float z = eval_zone_.lower_corner.get<2>();
-         z < eval_zone_.higher_corner.get<2>();
+    for (float z = eval_zone_.lower_corner[2]; z < eval_zone_.higher_corner[2];
          z += eval_zone_.step)
     {
-        for (float y = eval_zone_.lower_corner.get<1>();
-             y < eval_zone_.higher_corner.get<1>();
+        for (float y = eval_zone_.lower_corner[1];
+             y < eval_zone_.higher_corner[1];
              y += eval_zone_.step)
         {
-            for (float x = eval_zone_.lower_corner.get<0>();
-                 x < eval_zone_.higher_corner.get<0>();
+            for (float x = eval_zone_.lower_corner[0];
+                 x < eval_zone_.higher_corner[0];
                  x += eval_zone_.step)
             {
                 const Cube cube{space::Point3(x, y, z), eval_zone_.step};
@@ -145,14 +144,11 @@ Metaball::evaluate_vertices(const float vertex_potentials[8]) const
 float Metaball::distance(const space::Point3& vertex,
                          const space::Point3& potential) const
 {
-    const float x = potential.get<0>() - vertex.get<0>() * potential.get<0>() -
-                    vertex.get<0>();
+    const float x = potential[0] - vertex[0] * potential[0] - vertex[0];
 
-    const float y = potential.get<1>() - vertex.get<1>() * potential.get<1>() -
-                    vertex.get<1>();
+    const float y = potential[1] - vertex[1] * potential[1] - vertex[1];
 
-    const float z = potential.get<2>() - vertex.get<2>() * potential.get<2>() -
-                    vertex.get<2>();
+    const float z = potential[2] - vertex[2] * potential[2] - vertex[2];
 
     const float denom = x + y + z;
     if (denom == 0.f) // FIXME
