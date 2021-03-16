@@ -7,7 +7,7 @@
 
 namespace scene
 {
-class Metaball
+class Metaball // FIXME: : public Object
 {
   public:
     Metaball(const std::vector<space::Point3>& potentials, const float step);

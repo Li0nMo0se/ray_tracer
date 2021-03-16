@@ -18,8 +18,8 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
     space::Point3 min_point(potentials_[0]);
     space::Point3 max_point(potentials_[0]);
 
-    // Find the minimum on the x, y, z axes and the maximum on the x, y, z axes
-    // Then, we can have the diagonal of the cube
+    // Find the minimum on the x, y, z axes and the maximum on the x, y, z
+    // axes Then, we can have the diagonal of the cube
     for (const space::Point3& potential : potentials_)
     {
         min_point[0] = std::min(potential[0], min_point[0]);
@@ -30,6 +30,7 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
         max_point[1] = std::max(potential[1], max_point[1]);
         max_point[2] = std::max(potential[2], max_point[2]);
     }
+    // FIXME: padding until no vertex activation
     return EvaluationZone{min_point, max_point, step};
 }
 
@@ -65,8 +66,8 @@ Add it in the vector of triangle
 
        ----0----
       /|      /|
-     3 8     1 9
-     / |     / |
+     3 8     1 |
+     / |     / 9
     ---|-2---  |
     |  ---4-|--|
     11 7    10 5
@@ -83,6 +84,7 @@ Add it in the vector of triangle
 
 void Metaball::evaluate_cube(const Cube& cube)
 {
+    // Compute the position of every vertices
     const space::Vector3 x_axis(1.f, 0.f, 0.f);
     const space::Vector3 y_axis(0.f, 1.f, 0.f);
     const space::Vector3 z_axis(0.f, 0.f, 1.f);
@@ -97,25 +99,88 @@ void Metaball::evaluate_cube(const Cube& cube)
     const space::Point3 vertex_5 = vertex_7 + cube.length * (x_axis + z_axis);
     const space::Point3 vertex_6 = vertex_7 + cube.length * x_axis;
 
-    space::Point3 vertices[8] = {vertex_0,
-                                 vertex_1,
-                                 vertex_2,
-                                 vertex_3,
-                                 vertex_4,
-                                 vertex_5,
-                                 vertex_6,
-                                 vertex_7};
+    const space::Point3 vertices[8] = {vertex_0,
+                                       vertex_1,
+                                       vertex_2,
+                                       vertex_3,
+                                       vertex_4,
+                                       vertex_5,
+                                       vertex_6,
+                                       vertex_7};
+
+    // Compute values for every vertex
     float vertices_potentials[8] = {0};
-    // Compute values for every potentials
     for (unsigned short i = 0; i < 8; i++)
     {
         for (const space::Point3& potential : potentials_)
             vertices_potentials[i] += distance(vertices[i], potential);
     }
+
+    // Evaluate the activation of the vertices and get the index of the
+    // triangle combination
     unsigned char index = evaluate_vertices(vertices_potentials);
-    // FIXME: We found the index, find the correct triangles in
-    // potential_edge_list and add the triangles from the list for this specific
-    // index
+    const char* const triangles_vertices = potential_edge_list_[index];
+
+    // Compute the position of the edges according to their identifier (the
+    // position computed is the middle of the edge)
+    const space::Point3 edge_0 =
+        vertex_7 + cube.length * (0.5 * x_axis + y_axis + z_axis);
+    const space::Point3 edge_1 =
+        vertex_7 + cube.length * (x_axis + y_axis + 0.5 * z_axis);
+    const space::Point3 edge_2 =
+        vertex_7 + cube.length * (0.5 * x_axis + y_axis);
+    const space::Point3 edge_3 =
+        vertex_7 + cube.length * (y_axis + 0.5 * z_axis);
+    const space::Point3 edge_4 =
+        vertex_7 + cube.length * (0.5 * x_axis + z_axis);
+    const space::Point3 edge_5 =
+        vertex_7 + cube.length * (x_axis + 0.5 * z_axis);
+    const space::Point3 edge_6 = vertex_7 + cube.length * 0.5 * x_axis;
+    const space::Point3 edge_7 = vertex_7 + cube.length * 0.5 * z_axis;
+    const space::Point3 edge_8 =
+        vertex_7 + cube.length * (0.5 * y_axis + z_axis);
+    const space::Point3 edge_9 =
+        vertex_7 + cube.length * (x_axis + 0.5 * y_axis + z_axis);
+    const space::Point3 edge_10 =
+        vertex_7 + cube.length * (x_axis + 0.5 * y_axis);
+    const space::Point3 edge_11 = vertex_7 + cube.length * 0.5 * y_axis;
+
+    const space::Point3 edges[12] = {edge_0,
+                                     edge_1,
+                                     edge_2,
+                                     edge_3,
+                                     edge_4,
+                                     edge_5,
+                                     edge_6,
+                                     edge_7,
+                                     edge_8,
+                                     edge_9,
+                                     edge_10,
+                                     edge_11};
+
+    // Create triangles according to the list of triangles vertices
+    // Add those new triangles in the list of triangles of the metaball
+    for (unsigned short i = 0; i < 15 && triangles_vertices[i] != -1; i += 3)
+    {
+        assert(triangles_vertices[i] >= 0 && triangles_vertices[i] <= 11);
+        assert(triangles_vertices[i + 1] >= 0 &&
+               triangles_vertices[i + 1] <= 11);
+        assert(triangles_vertices[i + 2] >= 0 &&
+               triangles_vertices[i + 2] <= 11);
+
+        // Get the vertex of the triangle which are on three edges of the cube
+        // triangles_vertices[i] return the number/identifier of the edge
+        // Then, get the position of the edge according to its identifier
+        const space::Point3& A =
+            edges[static_cast<unsigned char>(triangles_vertices[i])];
+        const space::Point3& B =
+            edges[static_cast<unsigned char>(triangles_vertices[i + 1])];
+        const space::Point3& C =
+            edges[static_cast<unsigned char>(triangles_vertices[i + 2])];
+
+        // FIXME: texture material is nullptr
+        triangles_.emplace_back(Triangle{A, B, C, nullptr});
+    }
 }
 
 unsigned char
@@ -144,15 +209,14 @@ Metaball::evaluate_vertices(const float vertex_potentials[8]) const
 float Metaball::distance(const space::Point3& vertex,
                          const space::Point3& potential) const
 {
-    const float x = potential[0] - vertex[0] * potential[0] - vertex[0];
-
-    const float y = potential[1] - vertex[1] * potential[1] - vertex[1];
-
-    const float z = potential[2] - vertex[2] * potential[2] - vertex[2];
+    const float x = vertex[0] - potential[0] * vertex[0] - potential[0];
+    const float y = vertex[1] - potential[1] * vertex[1] - potential[1];
+    const float z = vertex[2] - potential[2] * vertex[2] - potential[2];
 
     const float denom = x + y + z;
-    if (denom == 0.f) // FIXME
-        return 999999999.f;
+
+    if (denom == 0.f) // FIXME: Must be tested
+        return threshold_;
     return 1 / denom;
 }
 
