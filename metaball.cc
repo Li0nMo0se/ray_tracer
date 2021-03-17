@@ -3,8 +3,10 @@
 namespace scene
 {
 Metaball::Metaball(const std::vector<space::Point3>& potentials,
-                   const float step)
-    : potentials_(std::move(potentials))
+                   const float step,
+                   const std::shared_ptr<TextureMaterial>& texture)
+    : Object(texture)
+    , potentials_(std::move(potentials))
     , eval_zone_(compute_evaluate_zone(step))
 {
     // Build every triangle according to the marching cube algorithm
@@ -34,6 +36,11 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
     return EvaluationZone{min_point, max_point, step};
 }
 
+/*
+   --------------------
+       Marching cube
+   --------------------
+*/
 void Metaball::marching_cube()
 {
     for (float z = eval_zone_.lower_corner[2]; z < eval_zone_.higher_corner[2];
@@ -160,7 +167,7 @@ void Metaball::evaluate_cube(const Cube& cube)
 
     // Create triangles according to the list of triangles vertices
     // Add those new triangles in the list of triangles of the metaball
-    for (unsigned short i = 0; i < 15 && triangles_vertices[i] != -1; i += 3)
+    for (unsigned char i = 0; i < 15 && triangles_vertices[i] != -1; i += 3)
     {
         assert(triangles_vertices[i] >= 0 && triangles_vertices[i] <= 11);
         assert(triangles_vertices[i + 1] >= 0 &&
@@ -178,8 +185,7 @@ void Metaball::evaluate_cube(const Cube& cube)
         const space::Point3& C =
             edges[static_cast<unsigned char>(triangles_vertices[i + 2])];
 
-        // FIXME: texture material is nullptr
-        triangles_.emplace_back(Triangle{A, B, C, nullptr});
+        triangles_.emplace_back(A, B, C, texture_);
     }
 }
 
@@ -218,6 +224,39 @@ float Metaball::distance(const space::Point3& vertex,
     if (denom == 0.f) // FIXME: Must be tested
         return threshold_;
     return 1 / denom;
+}
+
+/*
+   --------------------
+    Intersection area
+   --------------------
+ */
+std::optional<space::IntersectionInfo>
+Metaball::intersect(const space::Ray& ray) const
+{
+    std::optional<space::IntersectionInfo> intersect_global = std::nullopt;
+    for (const Triangle& triangle : triangles_)
+    {
+        std::optional<space::IntersectionInfo> intersect_local =
+            triangle.intersect(ray);
+        if (!intersect_local)
+            continue;
+
+        const space::IntersectionInfo& intersect_value =
+            intersect_local.value();
+        if (!intersect_global ||
+            intersect_value.t_get() < intersect_global.value().t_get())
+        {
+            intersect_global = intersect_value;
+        }
+    }
+    return intersect_global;
+}
+
+space::Vector3 Metaball::normal_get(const space::Ray&,
+                                    const space::IntersectionInfo&) const
+{
+    __builtin_unreachable();
 }
 
 } // namespace scene

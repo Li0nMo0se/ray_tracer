@@ -35,7 +35,8 @@ solve_quadratic(const float a, const float b, const float c)
         return t0 < t1 ? t0 : t1;
 }
 
-std::optional<float> Sphere::intersect(const space::Ray& ray) const
+std::optional<space::IntersectionInfo>
+Sphere::intersect(const space::Ray& ray) const
 {
     // P = O + tD
     // If sphere centered at (0, 0, 0)
@@ -64,13 +65,15 @@ std::optional<float> Sphere::intersect(const space::Ray& ray) const
     const float c = L.dot(L) - radius_ * radius_;
 
     const std::optional<float> t_res = solve_quadratic(a, b, c);
-    if (t_res && t_res.value() < space::T_MIN)
+    if (!t_res || t_res.value() < space::T_MIN)
         return std::nullopt;
     // Has intersected
-    return t_res;
+    return space::IntersectionInfo(t_res.value(), *this);
 }
 
-space::Vector3 Sphere::normal_get(const space::Ray& intersection) const
+space::Vector3
+Sphere::normal_get(const space::Ray&,
+                   const space::IntersectionInfo& intersection) const
 {
     // p is the intersection point
     return (intersection.intersection_get() - origin_).normalized();

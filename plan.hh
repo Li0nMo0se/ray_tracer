@@ -13,10 +13,12 @@ class Plan final : public Object
          const std::shared_ptr<TextureMaterial>& texture);
     ~Plan() = default;
 
-    virtual std::optional<float>
+    virtual std::optional<space::IntersectionInfo>
     intersect(const space::Ray& ray) const override;
 
-    virtual space::Vector3 normal_get(const space::Ray& ray) const override;
+    virtual space::Vector3
+    normal_get(const space::Ray& ray,
+               const space::IntersectionInfo&) const override;
 
   private:
     const space::Point3 origin_;

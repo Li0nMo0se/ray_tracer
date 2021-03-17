@@ -13,11 +13,12 @@ class Sphere : public Object
            const std::shared_ptr<TextureMaterial>& texture);
 
     // Return positive t value if intersection
-    virtual std::optional<float>
+    virtual std::optional<space::IntersectionInfo>
     intersect(const space::Ray& ray) const override;
 
     virtual space::Vector3
-    normal_get(const space::Ray& intersection) const override;
+    normal_get(const space::Ray&,
+               const space::IntersectionInfo& intersection) const override;
 
   private:
     const space::Point3 origin_;

@@ -14,7 +14,8 @@ Plan::Plan(const space::Point3& origin,
 {
 }
 
-space::Vector3 Plan::normal_get(const space::Ray& ray) const
+space::Vector3 Plan::normal_get(const space::Ray& ray,
+                                const space::IntersectionInfo&) const
 {
     // if dot product is positive, the angle is lower than pi/2.
     // The normal must have an angle greater than pi/2
@@ -26,7 +27,8 @@ space::Vector3 Plan::normal_get(const space::Ray& ray) const
     return normal_;
 }
 
-std::optional<float> Plan::intersect(const space::Ray& ray) const
+std::optional<space::IntersectionInfo>
+Plan::intersect(const space::Ray& ray) const
 {
     // Let's P be the intersection point such as P = O + tD
     // Let's P0 be the origin of the plan
@@ -45,6 +47,6 @@ std::optional<float> Plan::intersect(const space::Ray& ray) const
     const float t_res = numerator / denominator;
     if (t_res < space::T_MIN)
         return std::nullopt;
-    return t_res;
+    return space::IntersectionInfo(t_res, *this);
 }
 } // namespace scene

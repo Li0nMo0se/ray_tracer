@@ -1,16 +1,29 @@
 
 #pragma once
 
+#include "object.hh"
 #include "triangle.hh"
 #include "vector.hh"
 #include <vector>
 
 namespace scene
 {
-class Metaball // FIXME: : public Object
+class Metaball : public Object
 {
   public:
-    Metaball(const std::vector<space::Point3>& potentials, const float step);
+    Metaball(const std::vector<space::Point3>& potentials,
+             const float step,
+             const std::shared_ptr<TextureMaterial>& texture);
+
+    virtual ~Metaball() = default;
+
+    virtual std::optional<space::IntersectionInfo>
+    intersect(const space::Ray& ray) const override;
+
+    /* Unreachable */
+    virtual space::Vector3
+    normal_get(const space::Ray&,
+               const space::IntersectionInfo&) const override;
 
   private:
     struct Cube

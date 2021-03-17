@@ -72,7 +72,8 @@ static std::optional<space::Vector3> find_solution(const float coeff[3][4])
         return std::nullopt;
 }
 
-std::optional<float> Triangle::intersect(const space::Ray& ray) const
+std::optional<space::IntersectionInfo>
+Triangle::intersect(const space::Ray& ray) const
 {
     // Solve linera equation using Cramer's rule to find intersection
     float coeff[3][4];
@@ -117,10 +118,11 @@ std::optional<float> Triangle::intersect(const space::Ray& ray) const
     const float t = OG[0] / ray_direction[0];
     if (t < space::T_MIN)
         return std::nullopt;
-    return t;
+    return space::IntersectionInfo(t, *this);
 }
 
-space::Vector3 Triangle::normal_get(const space::Ray& ray) const
+space::Vector3 Triangle::normal_get(const space::Ray& ray,
+                                    const space::IntersectionInfo&) const
 {
     // Consider a triangle as a plan (see plan.cc for more details)
     // Return normal or -normal according to the ray

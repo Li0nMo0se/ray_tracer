@@ -5,6 +5,7 @@
 
 #include "camera.hh"
 #include "color.hh"
+#include "intersection_info.hh"
 #include "scene.hh"
 
 namespace rendering
@@ -40,14 +41,13 @@ class Engine
 
     static color::Color3
     get_object_color(const scene::Scene& scene,
-                     const scene::Object& obj,
                      const space::Ray& ray,
+                     const space::IntersectionInfo& intersection_info,
                      const unsigned int reflection_curr_depth,
                      const unsigned int reflection_max_depth);
-    static
-    void cast_ray(space::Ray& ray,
-                  const scene::Scene& scene,
-                  std::shared_ptr<scene::Object>& intersected_obj);
+
+    static std::optional<space::IntersectionInfo>
+    cast_ray(space::Ray& ray, const scene::Scene& scene);
 
     static bool check_shadow(const scene::Scene& scene,
                              const std::shared_ptr<scene::Light>& light,

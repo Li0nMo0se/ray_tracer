@@ -1,5 +1,6 @@
 #pragma once
 
+#include "intersection_info.hh"
 #include "ray.hh"
 #include "texture_material.hh"
 #include "vector.hh"
@@ -19,9 +20,12 @@ class Object
     virtual ~Object() = default;
 
     // If no intersection return nullopt
-    virtual std::optional<float> intersect(const space::Ray& ray) const = 0;
+    virtual std::optional<space::IntersectionInfo>
+    intersect(const space::Ray& ray) const = 0;
 
-    virtual space::Vector3 normal_get(const space::Ray& ray) const = 0;
+    virtual space::Vector3
+    normal_get(const space::Ray& ray,
+               const space::IntersectionInfo& intersection) const = 0;
 
     const TextureMaterial& get_texture() const { return *texture_; }
 

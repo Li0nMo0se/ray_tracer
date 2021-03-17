@@ -123,41 +123,44 @@ color::Color3 Engine::cast_ray_color(space::Ray& ray,
                                      const unsigned int reflection_curr_depth,
                                      const unsigned int reflection_max_depth)
 {
-    std::shared_ptr<scene::Object> intersected_obj = nullptr;
+    std::optional<space::IntersectionInfo> intersection = cast_ray(ray, scene);
 
-    cast_ray(ray, scene, intersected_obj);
-
-    if (ray.has_intersected())
+    if (intersection)
     {
+        space::IntersectionInfo& intersection_v = intersection.value();
+        const scene::Object& intersected_obj = intersection_v.obj_get();
         // TODO find more elegant way to do this
-        ray.auto_intersection_correction(intersected_obj->normal_get(ray));
+        intersection_v.auto_intersection_correction(
+            intersected_obj.normal_get(ray, intersection_v));
         return get_object_color(scene,
-                                *intersected_obj,
                                 ray,
+                                intersection_v,
                                 reflection_curr_depth,
                                 reflection_max_depth);
     }
     return color::black;
 }
 
-void Engine::cast_ray(space::Ray& ray,
-                      const scene::Scene& scene,
-                      std::shared_ptr<scene::Object>& intersected_obj)
+std::optional<space::IntersectionInfo>
+Engine::cast_ray(space::Ray& ray, const scene::Scene& scene)
 {
-    intersected_obj = nullptr;
-    // t such as P = O + tD
-    float t = 0.f;
+    std::optional<space::IntersectionInfo> closest_intersection = std::nullopt;
     for (const std::shared_ptr<scene::Object>& obj : scene.objects_)
     {
-        const std::optional<float> t_intersection = obj->intersect(ray);
-        if (t_intersection && (!intersected_obj || t_intersection.value() < t))
+        const std::optional<space::IntersectionInfo> intersection =
+            obj->intersect(ray);
+        if (intersection &&
+            (!closest_intersection || intersection.value().t_get() <
+                                          closest_intersection.value().t_get()))
         {
-            t = t_intersection.value();
-            intersected_obj = obj;
+            closest_intersection = intersection;
         }
     }
-    if (intersected_obj)
-        ray.t_set(t);
+
+    // Compute the intersection point if there was an intersection
+    if (closest_intersection)
+        closest_intersection.value().compute_intersection(ray);
+    return closest_intersection;
 }
 
 inline float Engine::distance_attenuation(const float distance)
@@ -165,15 +168,17 @@ inline float Engine::distance_attenuation(const float distance)
     return 1.f / distance;
 }
 
-color::Color3 Engine::get_object_color(const scene::Scene& scene,
-                                       const scene::Object& obj,
-                                       const space::Ray& ray,
-                                       const unsigned int reflection_curr_depth,
-                                       const unsigned int reflection_max_depth)
+color::Color3
+Engine::get_object_color(const scene::Scene& scene,
+                         const space::Ray& ray,
+                         const space::IntersectionInfo& intersection_info,
+                         const unsigned int reflection_curr_depth,
+                         const unsigned int reflection_max_depth)
 {
+    const scene::Object& obj = intersection_info.obj_get();
     // normal of the object at the intersection point
-    const space::Vector3& normal = obj.normal_get(ray);
-    const space::Vector3& intersection = ray.intersection_get();
+    const space::Vector3& normal = obj.normal_get(ray, intersection_info);
+    const space::Vector3& intersection = intersection_info.intersection_get();
 
     const scene::TextureMaterial& texture = obj.get_texture();
     const float kd = texture.get_kd(intersection);
@@ -227,18 +232,18 @@ bool Engine::check_shadow(const scene::Scene& scene,
     space::Ray ray(intersection, vector_to_light.normalized());
 
     const float distance_to_light = vector_to_light.length();
-    std::shared_ptr<scene::Object> intersected_obj = nullptr;
     // TODO: Here, we might not want to compute t but only know whether there's
     // a intersection
-    cast_ray(ray, scene, intersected_obj);
+    const std::optional<space::IntersectionInfo> intersection_info =
+        cast_ray(ray, scene);
 
-    if (!ray.has_intersected())
+    if (!intersection_info)
         return false;
 
     // Is the intersection of the ray between the intersected point and the
     // light
     // t_intersected is the distance between the intersected point and the
     // origin (that's the definition of a ray)
-    return ray.t_get() < distance_to_light;
+    return intersection_info.value().t_get() < distance_to_light;
 }
 } // namespace rendering
