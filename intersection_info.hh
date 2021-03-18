@@ -26,6 +26,9 @@ class IntersectionInfo
     }
 
     static constexpr float intersection_correction_ratio = 1.f / 10.f;
+
+    // TODO instead of going to the normal, go back until no intersection with
+    // yourself
     void auto_intersection_correction(const Vector3& normal)
     {
         assert(intersection_.has_value());

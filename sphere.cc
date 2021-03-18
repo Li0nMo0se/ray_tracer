@@ -65,7 +65,7 @@ Sphere::intersect(const space::Ray& ray) const
     const float c = L.dot(L) - radius_ * radius_;
 
     const std::optional<float> t_res = solve_quadratic(a, b, c);
-    if (!t_res || t_res.value() < space::T_MIN)
+    if (!t_res.has_value() || t_res.value() < space::T_MIN)
         return std::nullopt;
     // Has intersected
     return space::IntersectionInfo(t_res.value(), *this);

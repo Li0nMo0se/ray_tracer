@@ -167,7 +167,8 @@ void Metaball::evaluate_cube(const Cube& cube)
 
     // Create triangles according to the list of triangles vertices
     // Add those new triangles in the list of triangles of the metaball
-    for (unsigned char i = 0; i < 15 && triangles_vertices[i] != -1; i += 3)
+    for (unsigned char i = 0; i < max_nb_edges && triangles_vertices[i] != -1;
+         i += nb_edges_triangle)
     {
         assert(triangles_vertices[i] >= 0 && triangles_vertices[i] <= 11);
         assert(triangles_vertices[i + 1] >= 0 &&
@@ -190,7 +191,7 @@ void Metaball::evaluate_cube(const Cube& cube)
 }
 
 unsigned char
-Metaball::evaluate_vertices(const float vertex_potentials[8]) const
+Metaball::evaluate_vertices(const float vertex_potentials[nb_edges_cube]) const
 {
     unsigned char index = 0;
     if (vertex_potentials[0] < threshold_)
@@ -239,9 +240,12 @@ Metaball::intersect(const space::Ray& ray) const
     {
         std::optional<space::IntersectionInfo> intersect_local =
             triangle.intersect(ray);
-        if (!intersect_local)
+
+        // No intersection, go to next triangle
+        if (!intersect_local.has_value())
             continue;
 
+        // Set intersection if first or intersection closer than last one
         const space::IntersectionInfo& intersect_value =
             intersect_local.value();
         if (!intersect_global ||

@@ -34,7 +34,7 @@ class Engine
                     const unsigned int reflection_max_depth);
 
     static color::Color3
-    cast_ray_color(space::Ray& ray,
+    cast_ray_color(const space::Ray& ray,
                    const scene::Scene& scene,
                    const unsigned int reflection_curr_depth,
                    const unsigned int reflection_max_depth);
@@ -47,7 +47,7 @@ class Engine
                      const unsigned int reflection_max_depth);
 
     static std::optional<space::IntersectionInfo>
-    cast_ray(space::Ray& ray, const scene::Scene& scene);
+    cast_ray(const space::Ray& ray, const scene::Scene& scene);
 
     static bool check_shadow(const scene::Scene& scene,
                              const std::shared_ptr<scene::Light>& light,

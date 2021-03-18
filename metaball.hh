@@ -20,7 +20,11 @@ class Metaball : public Object
     virtual std::optional<space::IntersectionInfo>
     intersect(const space::Ray& ray) const override;
 
-    /* Unreachable */
+    /* Unreachable
+     *
+     * Engine can only get the normal of a triangle of the mesh
+     * Never from the metaball itself
+     */
     virtual space::Vector3
     normal_get(const space::Ray&,
                const space::IntersectionInfo&) const override;
@@ -39,7 +43,12 @@ class Metaball : public Object
         const float step; // step between the cubes
     };
 
-    static constexpr char potential_edge_list_[256][15] = {
+    static constexpr uint8_t max_nb_edges = 15;
+    static constexpr uint16_t max_nb_configs = 256;
+    static constexpr uint8_t nb_edges_triangle = 3;
+    static constexpr uint8_t nb_edges_cube = 8;
+
+    static constexpr char potential_edge_list_[max_nb_configs][max_nb_edges] = {
 #include "edges_list.txt"
     };
 
