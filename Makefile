@@ -6,10 +6,10 @@ BIN=raytracer
 OBJ_FILES = $(CC_FILES:.cc=.o)
 
 CXX_FLAGS = -Wall -Wextra -std=c++2a -Werror=narrowing
-RELEASE_CXX_FLAGS = -Werror -O3 -march=native -DNDEBUG
+RELEASE_CXX_FLAGS = -Werror -O3 -march=native -DNDEBUG -fopenmp
 DEBUG_CXX_FLAGS = -g
 # Add flags for release or debug
-CXX_FLAGS += $(DEBUG_CXX_FLAGS)
+CXX_FLAGS += $(RELEASE_CXX_FLAGS)
 LDXX_FLAGS =
 
 all: $(OBJ_FILES)

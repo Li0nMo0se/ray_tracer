@@ -43,12 +43,14 @@ void Engine::render(const std::string& filename,
     //      Compute the ray from the origin of the camera to the pixel
     //      Find intersections of this ray with every objects of the scene
     //      (Calculate specular & diffuse contribution)
-
-    space::Point3 curr_pixel = top_left;
     for (unsigned int y = 0; y < resolution_height; ++y)
     {
+#pragma omp parallel for
         for (unsigned int x = 0; x < resolution_width; ++x)
         {
+            const space::Point3 curr_pixel = top_left +
+                                             x * (unit_x * camera.x_axis_) -
+                                             y * (unit_y * camera.y_axis_);
             // Ray computation with aliasing
             im(y, x) = get_pixel_color(curr_pixel,
                                        scene,
@@ -56,13 +58,7 @@ void Engine::render(const std::string& filename,
                                        unit_y,
                                        aliasing_level,
                                        reflection_max_depth);
-            // Move to next right pixel
-            curr_pixel += unit_x * camera.x_axis_;
         }
-        // Move to row below
-        curr_pixel -= unit_y * camera.y_axis_;
-        // Go back to left column
-        curr_pixel -= width * camera.x_axis_;
     }
 
     im.save(filename);
