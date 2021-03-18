@@ -17,11 +17,9 @@ void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone,
                                     const uint8_t pad_coeff) const
 {
     // TODO pad until no activation
-    const space::Vector3 padd_direction(eval_zone.step,
-                                        eval_zone.step,
-                                        eval_zone.step);
-    eval_zone.lower_corner -= padd_direction * pad_coeff;
-    eval_zone.higher_corner += padd_direction * pad_coeff;
+    const space::Vector3 padd_direction(pad_coeff, pad_coeff, pad_coeff);
+    eval_zone.lower_corner -= pad_coeff;
+    eval_zone.higher_corner += pad_coeff;
 }
 
 Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
@@ -46,7 +44,8 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
 
     EvaluationZone eval_zone = {min_point, max_point, step};
 
-    pad_eval_zone_border(eval_zone, 5);
+    // FIXME: Check the padding value
+    pad_eval_zone_border(eval_zone, 2);
 
     return eval_zone;
 }
@@ -232,14 +231,14 @@ unsigned char Metaball::evaluate_vertices(
 float Metaball::distance(const space::Point3& vertex,
                          const space::Point3& potential) const
 {
-    const float x = vertex[0] - potential[0] * vertex[0] - potential[0];
-    const float y = vertex[1] - potential[1] * vertex[1] - potential[1];
-    const float z = vertex[2] - potential[2] * vertex[2] - potential[2];
+    const float x = (vertex[0] - potential[0]) * (vertex[0] - potential[0]);
+    const float y = (vertex[1] - potential[1]) * (vertex[1] - potential[1]);
+    const float z = (vertex[2] - potential[2]) * (vertex[2] - potential[2]);
 
     const float denom = x + y + z;
 
     if (denom == 0.f) // FIXME: Must be tested
-        return threshold_;
+        return 0.f;
     return 1 / denom;
 }
 

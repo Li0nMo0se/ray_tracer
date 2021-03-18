@@ -1,6 +1,6 @@
 
-Camera (0,1,0) (0,1,0) (0,0,1) 1 45 45
-PointLight (0,1,0) 1
+Camera (0,1,-1) (0,1,0) (0,0,1) 1 45 45
+PointLight (0,1,-1) 1
 
 UniformTexture texture (0,255,255) 1 1 1
-Metaball 0.5 texture (0,0,1) (1,1,1) (-1,1,1)
+Metaball 0.05 texture (0,1,2) (1.5,1,2) (0,-1,2.5)

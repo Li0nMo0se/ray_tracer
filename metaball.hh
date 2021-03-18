@@ -87,7 +87,7 @@ class Metaball : public Object
     std::vector<scene::Triangle> triangles_;
 
     // FIXME: Which value for the threshold
-    static constexpr float threshold_ = 1.0f;
+    static constexpr float threshold_ = 2.f;
 };
 
 } // namespace scene
