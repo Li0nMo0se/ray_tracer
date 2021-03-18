@@ -14,12 +14,12 @@ Metaball::Metaball(const std::vector<space::Point3>& potentials,
 }
 
 void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone,
-                                    const uint8_t pad_coeff) const
+                                    const float pad_coeff) const
 {
     // TODO pad until no activation
-    const space::Vector3 padd_direction(pad_coeff, pad_coeff, pad_coeff);
-    eval_zone.lower_corner -= pad_coeff;
-    eval_zone.higher_corner += pad_coeff;
+    const space::Vector3 pad_direction(pad_coeff, pad_coeff, pad_coeff);
+    eval_zone.lower_corner -= pad_direction;
+    eval_zone.higher_corner += pad_direction;
 }
 
 Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
@@ -45,7 +45,7 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
     EvaluationZone eval_zone = {min_point, max_point, step};
 
     // FIXME: Check the padding value
-    pad_eval_zone_border(eval_zone, 2);
+    pad_eval_zone_border(eval_zone, 2.f);
 
     return eval_zone;
 }

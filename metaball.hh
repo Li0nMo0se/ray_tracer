@@ -72,7 +72,7 @@ class Metaball : public Object
 
     // Add a padding to the evaluation zone to avoid slicing a metaball
     void pad_eval_zone_border(EvaluationZone& eval_zone,
-                              const uint8_t pad_coeff) const;
+                              const float pad_coeff) const;
 
   private:
     const std::vector<space::Point3> potentials_;
