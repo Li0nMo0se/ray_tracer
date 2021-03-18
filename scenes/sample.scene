@@ -21,3 +21,9 @@ UniformTexture plan_texture (0,255,255) 1 1 1
 # Plan such as
 # Plan origin normal texture_name
 Plan (0,0,0) (0,1,0) plan_texture
+
+# Triangle such as Triange A B C texture
+Triangle (0,1,1) (0,0,1) (0,-1,1) red
+
+# Metaball such as Metaball step texture [potentials]*
+Metaball 0.5 red (1,1,1) (2,1,1) (3,1,1)
