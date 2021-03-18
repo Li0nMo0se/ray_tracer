@@ -38,15 +38,16 @@ class Metaball : public Object
 
     struct EvaluationZone
     {
-        const space::Point3 lower_corner;
-        const space::Point3 higher_corner;
+        space::Point3 lower_corner;
+        space::Point3 higher_corner;
         const float step; // step between the cubes
     };
 
     static constexpr uint8_t max_nb_edges = 15;
     static constexpr uint16_t max_nb_configs = 256;
-    static constexpr uint8_t nb_edges_triangle = 3;
-    static constexpr uint8_t nb_edges_cube = 8;
+    static constexpr uint8_t nb_vertices_triangle = 3;
+    static constexpr uint8_t nb_vertices_cube = 8;
+    static constexpr uint8_t nb_edges_cube = 12;
 
     static constexpr char potential_edge_list_[max_nb_configs][max_nb_edges] = {
 #include "edges_list.txt"
@@ -68,6 +69,10 @@ class Metaball : public Object
 
     // For the constructor, compute the evaluation zone.
     EvaluationZone compute_evaluate_zone(const float step) const;
+
+    // Add a padding to the evaluation zone to avoid slicing a metaball
+    void pad_eval_zone_border(EvaluationZone& eval_zone,
+                              const uint8_t pad_coeff) const;
 
   private:
     const std::vector<space::Point3> potentials_;

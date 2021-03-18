@@ -13,6 +13,17 @@ Metaball::Metaball(const std::vector<space::Point3>& potentials,
     marching_cube();
 }
 
+void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone,
+                                    const uint8_t pad_coeff) const
+{
+    // TODO pad until no activation
+    const space::Vector3 padd_direction(eval_zone.step,
+                                        eval_zone.step,
+                                        eval_zone.step);
+    eval_zone.lower_corner -= padd_direction * pad_coeff;
+    eval_zone.higher_corner += padd_direction * pad_coeff;
+}
+
 Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
 {
     assert(potentials_.size() != 0);
@@ -32,8 +43,12 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
         max_point[1] = std::max(potential[1], max_point[1]);
         max_point[2] = std::max(potential[2], max_point[2]);
     }
-    // FIXME: padding until no vertex activation
-    return EvaluationZone{min_point, max_point, step};
+
+    EvaluationZone eval_zone = {min_point, max_point, step};
+
+    pad_eval_zone_border(eval_zone, 5);
+
+    return eval_zone;
 }
 
 /*
@@ -106,18 +121,18 @@ void Metaball::evaluate_cube(const Cube& cube)
     const space::Point3 vertex_5 = vertex_7 + cube.length * (x_axis + z_axis);
     const space::Point3 vertex_6 = vertex_7 + cube.length * x_axis;
 
-    const space::Point3 vertices[8] = {vertex_0,
-                                       vertex_1,
-                                       vertex_2,
-                                       vertex_3,
-                                       vertex_4,
-                                       vertex_5,
-                                       vertex_6,
-                                       vertex_7};
+    const space::Point3 vertices[nb_vertices_cube] = {vertex_0,
+                                                      vertex_1,
+                                                      vertex_2,
+                                                      vertex_3,
+                                                      vertex_4,
+                                                      vertex_5,
+                                                      vertex_6,
+                                                      vertex_7};
 
     // Compute values for every vertex
-    float vertices_potentials[8] = {0};
-    for (unsigned short i = 0; i < 8; i++)
+    float vertices_potentials[nb_vertices_cube] = {0};
+    for (unsigned short i = 0; i < nb_vertices_cube; i++)
     {
         for (const space::Point3& potential : potentials_)
             vertices_potentials[i] += distance(vertices[i], potential);
@@ -152,23 +167,23 @@ void Metaball::evaluate_cube(const Cube& cube)
         vertex_7 + cube.length * (x_axis + 0.5 * y_axis);
     const space::Point3 edge_11 = vertex_7 + cube.length * 0.5 * y_axis;
 
-    const space::Point3 edges[12] = {edge_0,
-                                     edge_1,
-                                     edge_2,
-                                     edge_3,
-                                     edge_4,
-                                     edge_5,
-                                     edge_6,
-                                     edge_7,
-                                     edge_8,
-                                     edge_9,
-                                     edge_10,
-                                     edge_11};
+    const space::Point3 edges[nb_edges_cube] = {edge_0,
+                                                edge_1,
+                                                edge_2,
+                                                edge_3,
+                                                edge_4,
+                                                edge_5,
+                                                edge_6,
+                                                edge_7,
+                                                edge_8,
+                                                edge_9,
+                                                edge_10,
+                                                edge_11};
 
     // Create triangles according to the list of triangles vertices
     // Add those new triangles in the list of triangles of the metaball
     for (unsigned char i = 0; i < max_nb_edges && triangles_vertices[i] != -1;
-         i += nb_edges_triangle)
+         i += nb_vertices_triangle)
     {
         assert(triangles_vertices[i] >= 0 && triangles_vertices[i] <= 11);
         assert(triangles_vertices[i + 1] >= 0 &&
@@ -176,9 +191,10 @@ void Metaball::evaluate_cube(const Cube& cube)
         assert(triangles_vertices[i + 2] >= 0 &&
                triangles_vertices[i + 2] <= 11);
 
-        // Get the vertex of the triangle which are on three edges of the cube
-        // triangles_vertices[i] return the number/identifier of the edge
-        // Then, get the position of the edge according to its identifier
+        // Get the vertex of the triangle which are on three edges of the
+        // cube triangles_vertices[i] return the number/identifier of the
+        // edge Then, get the position of the edge according to its
+        // identifier
         const space::Point3& A =
             edges[static_cast<unsigned char>(triangles_vertices[i])];
         const space::Point3& B =
@@ -190,8 +206,8 @@ void Metaball::evaluate_cube(const Cube& cube)
     }
 }
 
-unsigned char
-Metaball::evaluate_vertices(const float vertex_potentials[nb_edges_cube]) const
+unsigned char Metaball::evaluate_vertices(
+    const float vertex_potentials[nb_vertices_cube]) const
 {
     unsigned char index = 0;
     if (vertex_potentials[0] < threshold_)
