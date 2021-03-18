@@ -39,8 +39,11 @@ class Parser final
     std::shared_ptr<scene::Object> parse_sphere(const std::string& line);
     std::shared_ptr<scene::Object> parse_plan(const std::string& line);
     std::shared_ptr<scene::Object> parse_triangle(const std::string& line);
+    std::shared_ptr<scene::Object> parse_metaball(const std::string& line);
 
     std::shared_ptr<scene::Light> parse_pointlight(const std::string& line);
+
+    std::shared_ptr<scene::TextureMaterial> get_texture(std::stringstream& ss);
 
     scene::Camera parse_camera(const std::string& line);
     unsigned int nb_line_;
