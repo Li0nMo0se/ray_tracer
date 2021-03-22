@@ -1,7 +1,5 @@
 #include "metaball.hh"
 
-#include <iostream>
-
 namespace scene
 {
 Metaball::Metaball(const std::vector<space::Point3>& potentials,
@@ -17,8 +15,6 @@ Metaball::Metaball(const std::vector<space::Point3>& potentials,
 
 void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone) const
 {
-    std::cout << "Z_min" << eval_zone.lower_corner[2] << std::endl;
-    std::cout << "Z_max" << eval_zone.higher_corner[2] << std::endl;
     for (const space::Point3& potential : potentials_)
     {
         for (uint8_t i = 0; i < 3; ++i)
@@ -49,10 +45,14 @@ void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone) const
             }
         }
     }
-    std::cout << "Z_min" << eval_zone.lower_corner[2] << std::endl;
-    eval_zone.lower_corner[2] = 0;
-    std::cout << "Z_min" << eval_zone.lower_corner[2] << std::endl;
-    std::cout << "Z_max" << eval_zone.higher_corner[2] << std::endl;
+
+    // Add more padding to account of cube still being partially in the metaball
+    // Due to corner info & epsilone error
+    for (uint8_t i = 0; i < 3; ++i)
+    {
+        eval_zone.lower_corner[i] -= 2 * eval_zone.step;
+        eval_zone.higher_corner[i] += 2 * eval_zone.step;
+    }
 }
 
 Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
