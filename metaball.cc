@@ -130,12 +130,8 @@ void Metaball::evaluate_cube(const Cube& cube)
                                                       vertex_7};
 
     // Compute values for every vertex
-    float vertices_potentials[nb_vertices_cube] = {0};
-    for (unsigned short i = 0; i < nb_vertices_cube; i++)
-    {
-        for (const space::Point3& potential : potentials_)
-            vertices_potentials[i] += distance(vertices[i], potential);
-    }
+    std::array<float, nb_vertices_cube> vertices_potentials{0};
+    compute_vertices_potentials(vertices, vertices_potentials);
 
     // Evaluate the activation of the vertices and get the index of the
     // triangle combination
@@ -205,8 +201,19 @@ void Metaball::evaluate_cube(const Cube& cube)
     }
 }
 
+void Metaball::compute_vertices_potentials(
+    const space::Point3 vertices[nb_vertices_cube],
+    std::array<float, nb_vertices_cube>& vertices_potentials) const
+{
+    for (unsigned short i = 0; i < nb_vertices_cube; i++)
+    {
+        for (const space::Point3& potential : potentials_)
+            vertices_potentials[i] += distance(vertices[i], potential);
+    }
+}
+
 unsigned char Metaball::evaluate_vertices(
-    const float vertex_potentials[nb_vertices_cube]) const
+    const std::array<float, nb_vertices_cube>& vertex_potentials) const
 {
     unsigned char index = 0;
     if (vertex_potentials[0] < threshold_)

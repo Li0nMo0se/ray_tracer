@@ -4,6 +4,7 @@
 #include "object.hh"
 #include "triangle.hh"
 #include "vector.hh"
+#include <array>
 #include <vector>
 
 namespace scene
@@ -60,8 +61,16 @@ class Metaball : public Object
     // Evaluate potential foreach vertex
     void evaluate_cube(const Cube& cube);
 
+    // Compute the vertices potential according to the potentials in the
+    // metaball
+
+    void compute_vertices_potentials(
+        const space::Point3 vertices[nb_vertices_cube],
+        std::array<float, nb_vertices_cube>& vertices_potentials) const;
+
     // Compute index in the edges list according to the given vertex potential
-    unsigned char evaluate_vertices(const float vertex_potentials[8]) const;
+    unsigned char evaluate_vertices(
+        const std::array<float, nb_vertices_cube>& vertex_potentials) const;
 
     // Compute the distance function between a vertex and the potential
     float distance(const space::Point3& vertex,
