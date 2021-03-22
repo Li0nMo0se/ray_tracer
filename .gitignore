@@ -1,4 +1,5 @@
 *.o
 raytracer
-data/*
-settings.json
+data
+.vscode
+
