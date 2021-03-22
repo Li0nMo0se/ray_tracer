@@ -61,9 +61,9 @@ class Metaball : public Object
     // Evaluate potential foreach vertex
     void evaluate_cube(const Cube& cube);
 
+    // static constexpr float min_potential_ = 0.2f;
     // Compute the vertices potential according to the potentials in the
     // metaball
-
     void compute_vertices_potentials(
         const space::Point3 vertices[nb_vertices_cube],
         std::array<float, nb_vertices_cube>& vertices_potentials) const;
@@ -72,16 +72,17 @@ class Metaball : public Object
     unsigned char evaluate_vertices(
         const std::array<float, nb_vertices_cube>& vertex_potentials) const;
 
-    // Compute the distance function between a vertex and the potential
-    float distance(const space::Point3& vertex,
-                   const space::Point3& potential) const;
+    // Compute the distance function between a vertex and the potential and
+    // deduce the potential value
+    template <uint8_t dim>
+    float evaluate_potential(const space::Vector<dim, float>& vertex,
+                             const space::Vector<dim, float>& potential) const;
 
     // For the constructor, compute the evaluation zone.
     EvaluationZone compute_evaluate_zone(const float step) const;
 
     // Add a padding to the evaluation zone to avoid slicing a metaball
-    void pad_eval_zone_border(EvaluationZone& eval_zone,
-                              const float pad_coeff) const;
+    void pad_eval_zone_border(EvaluationZone& eval_zone) const;
 
   private:
     const std::vector<space::Point3> potentials_;
@@ -100,3 +101,5 @@ class Metaball : public Object
 };
 
 } // namespace scene
+
+#include "metaball.hxx"

@@ -1,5 +1,7 @@
 #include "metaball.hh"
 
+#include <iostream>
+
 namespace scene
 {
 Metaball::Metaball(const std::vector<space::Point3>& potentials,
@@ -13,13 +15,44 @@ Metaball::Metaball(const std::vector<space::Point3>& potentials,
     marching_cube();
 }
 
-void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone,
-                                    const float pad_coeff) const
+void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone) const
 {
-    // TODO pad until no activation
-    const space::Vector3 pad_direction(pad_coeff, pad_coeff, pad_coeff);
-    eval_zone.lower_corner -= pad_direction;
-    eval_zone.higher_corner += pad_direction;
+    std::cout << "Z_min" << eval_zone.lower_corner[2] << std::endl;
+    std::cout << "Z_max" << eval_zone.higher_corner[2] << std::endl;
+    for (const space::Point3& potential : potentials_)
+    {
+        for (uint8_t i = 0; i < 3; ++i)
+        {
+            const space::Vector<1, float> potential_coord(potential[i]);
+
+            // Lower corner
+            {
+                space::Vector<1, float> lower_coord(eval_zone.lower_corner[i]);
+                while (evaluate_potential<1>(potential_coord, lower_coord) >=
+                       threshold_)
+                {
+                    eval_zone.lower_corner[i] -= eval_zone.step;
+                    lower_coord[0] = eval_zone.lower_corner[i];
+                }
+            }
+
+            // Higher corner
+            {
+                space::Vector<1, float> higher_coord(
+                    eval_zone.higher_corner[i]);
+                while (evaluate_potential<1>(potential_coord, higher_coord) >=
+                       threshold_)
+                {
+                    eval_zone.higher_corner[i] += eval_zone.step;
+                    higher_coord[0] = eval_zone.higher_corner[i];
+                }
+            }
+        }
+    }
+    std::cout << "Z_min" << eval_zone.lower_corner[2] << std::endl;
+    eval_zone.lower_corner[2] = 0;
+    std::cout << "Z_min" << eval_zone.lower_corner[2] << std::endl;
+    std::cout << "Z_max" << eval_zone.higher_corner[2] << std::endl;
 }
 
 Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
@@ -45,7 +78,7 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
     EvaluationZone eval_zone = {min_point, max_point, step};
 
     // FIXME: Check the padding value
-    pad_eval_zone_border(eval_zone, 2.f);
+    pad_eval_zone_border(eval_zone);
 
     return eval_zone;
 }
@@ -208,7 +241,8 @@ void Metaball::compute_vertices_potentials(
     for (unsigned short i = 0; i < nb_vertices_cube; i++)
     {
         for (const space::Point3& potential : potentials_)
-            vertices_potentials[i] += distance(vertices[i], potential);
+            vertices_potentials[i] +=
+                evaluate_potential<3>(vertices[i], potential);
     }
 }
 
@@ -234,21 +268,6 @@ unsigned char Metaball::evaluate_vertices(
         index |= 128;
     return index;
 }
-
-float Metaball::distance(const space::Point3& vertex,
-                         const space::Point3& potential) const
-{
-    const float x = (vertex[0] - potential[0]) * (vertex[0] - potential[0]);
-    const float y = (vertex[1] - potential[1]) * (vertex[1] - potential[1]);
-    const float z = (vertex[2] - potential[2]) * (vertex[2] - potential[2]);
-
-    const float denom = x + y + z;
-
-    if (denom == 0.f) // FIXME: Must be tested
-        return 0.f;
-    return 1 / denom;
-}
-
 /*
    --------------------
     Intersection area
