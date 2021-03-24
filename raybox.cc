@@ -67,9 +67,16 @@ RayBox::intersect(const space::Ray& ray) const
 
     // Intersection found
     // Can t_min be greater than t_max here ?
+    assert(t_min <= t_max);
+    float t_res = t_min;
+    if (t_res < space::T_MIN)
+    {
+        t_res = t_max;
+        if (t_res < space::T_MIN)
+            return std::nullopt;
+    }
 
-    // FIXME: Check negative t?
-    // FIXME: Check t < ESPILON ?
+    return space::IntersectionInfo(t_res, *this);
 }
 
 space::Vector3

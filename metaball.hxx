@@ -12,7 +12,7 @@ float Metaball::evaluate_potential(
     for (uint8_t i = 1; i < dim; ++i)
         denom += (vertex[i] - potential[i]) * (vertex[i] - potential[i]);
 
-    if (denom <= 1e-6)
+    if (denom <= epsilone)
     {
         return threshold_;
     }

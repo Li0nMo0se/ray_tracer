@@ -2,8 +2,6 @@
 
 namespace scene
 {
-constexpr float epsilone = 1e-6;
-
 Plan::Plan(const space::Point3& origin,
            const space::Vector3& normal,
            const std::shared_ptr<TextureMaterial>& texture)

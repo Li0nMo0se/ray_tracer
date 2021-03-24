@@ -9,6 +9,10 @@
 
 namespace scene
 {
+
+// Near zero value
+constexpr float epsilone = 1e-6;
+
 class Object
 {
   public:
