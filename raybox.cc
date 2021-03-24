@@ -9,6 +9,9 @@ RayBox::RayBox(const space::Point3& lower_bound,
     , lower_bound_(lower_bound)
     , higher_bound_(higher_bound)
 {
+    assert(lower_bound_[0] <= higher_bound_[0]);
+    assert(lower_bound_[1] <= higher_bound_[1]);
+    assert(lower_bound_[2] <= higher_bound_[2]);
 }
 
 std::optional<space::IntersectionInfo>

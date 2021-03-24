@@ -3,6 +3,7 @@
 #include "metaball.hh"
 #include "plan.hh"
 #include "point_light.hh"
+#include "raybox.hh"
 #include "sphere.hh"
 #include "triangle.hh"
 #include "uniform_texture.hh"
@@ -130,6 +131,26 @@ std::shared_ptr<scene::Object> Parser::parse_triangle(const std::string& line)
     return std::make_shared<scene::Triangle>(A, B, C, texture);
 }
 
+std::shared_ptr<scene::Object> Parser::parse_raybox(const std::string& line)
+{
+
+    std::stringstream ss(line);
+    std::string tmp;
+    ss >> tmp; // Raybox
+
+    std::string lower_bound_str;
+    ss >> lower_bound_str;
+    const space::Vector3 lower_bound = parse_vector(lower_bound_str);
+
+    std::string higher_bound_str;
+    ss >> higher_bound_str;
+    const space::Vector3 higher_bound = parse_vector(higher_bound_str);
+
+    return std::make_shared<scene::RayBox>(lower_bound,
+                                           higher_bound,
+                                           get_texture(ss));
+}
+
 std::shared_ptr<scene::TextureMaterial>
 Parser::get_texture(std::stringstream& ss)
 {
@@ -218,6 +239,8 @@ scene::Scene Parser::parse_scene(const std::string filename)
                 scene.add_object(parse_triangle(line));
             else if (curr_token == "Metaball")
                 scene.add_object(parse_metaball(line));
+            else if (curr_token == "Raybox")
+                scene.add_object(parse_raybox(line));
             else
                 throw ParseError("Undefined structure: " + curr_token,
                                  nb_line_);
