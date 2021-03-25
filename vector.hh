@@ -30,8 +30,18 @@ class Vector
     inline Vector& operator*=(T rhs);
     inline Vector operator*(T rhs) const;
 
+    // Perform bitwise multiplication
+    inline Vector& operator*=(const Vector& rhs);
+    // Perform bitwise multiplication
+    inline Vector operator*(const Vector& rhs) const;
+
     inline Vector& operator/=(T rhs);
     inline Vector operator/(T rhs) const;
+
+    // Perform bitwise division
+    inline Vector& operator/=(const Vector& rhs);
+    // Perform bitwise division
+    inline Vector operator/(const Vector& rhs) const;
 
     inline Vector& operator+=(const Vector& rhs);
     inline Vector operator+(const Vector& rhs) const;

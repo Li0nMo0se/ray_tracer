@@ -22,5 +22,7 @@ class RayBox : public Object
   private:
     const space::Point3 lower_bound_;
     const space::Point3 higher_bound_;
+    const space::Point3 center_;
+    const space::Vector3 map_to_unit_box_;
 };
 } // namespace scene

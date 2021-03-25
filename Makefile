@@ -24,7 +24,7 @@ RELEASE_CXX_FLAGS += -fno-lifetime-dse # Dangerous if we use field of object aft
 RELEASE_CXX_FLAGS += -ftree-loop-im # Loop invariant motion on trees
 
 # Debug flags
-DEBUG_CXX_FLAGS = -g
+DEBUG_CXX_FLAGS = -g -O0
 
 # Add flags for release or debug
 CXX_FLAGS += $(DEBUG_CXX_FLAGS)

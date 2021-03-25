@@ -36,6 +36,38 @@ inline Vector<size, T> Vector<size, T>::operator/(T rhs) const
 }
 
 template <unsigned int size, typename T>
+inline Vector<size, T>& Vector<size, T>::operator*=(const Vector<size, T>& rhs)
+{
+    for (unsigned int i = 0; i < size; i++)
+        this->vect_[i] *= rhs.vect_[i];
+    return *this;
+}
+template <unsigned int size, typename T>
+inline Vector<size, T>
+Vector<size, T>::operator*(const Vector<size, T>& rhs) const
+{
+    Vector<size, T> new_vect = *this;
+    new_vect *= rhs;
+    return new_vect;
+}
+
+template <unsigned int size, typename T>
+inline Vector<size, T>& Vector<size, T>::operator/=(const Vector<size, T>& rhs)
+{
+    for (unsigned int i = 0; i < size; i++)
+        this->vect_[i] /= rhs.vect_[i];
+    return *this;
+}
+template <unsigned int size, typename T>
+inline Vector<size, T>
+Vector<size, T>::operator/(const Vector<size, T>& rhs) const
+{
+    Vector<size, T> new_vect = *this;
+    new_vect /= rhs;
+    return new_vect;
+}
+
+template <unsigned int size, typename T>
 inline Vector<size, T>& Vector<size, T>::operator+=(const Vector<size, T>& rhs)
 {
     for (unsigned int i = 0; i < size; i++)
