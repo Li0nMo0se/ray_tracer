@@ -274,6 +274,9 @@ unsigned char Metaball::evaluate_vertices(
 std::optional<space::IntersectionInfo>
 Metaball::intersect(const space::Ray& ray) const
 {
+    if (!eval_zone_.raybox.intersect(ray))
+        return std::nullopt;
+
     std::optional<space::IntersectionInfo> intersect_global = std::nullopt;
     for (const Triangle& triangle : triangles_)
     {
