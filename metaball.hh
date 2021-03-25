@@ -2,6 +2,7 @@
 #pragma once
 
 #include "object.hh"
+#include "raybox.hh"
 #include "triangle.hh"
 #include "vector.hh"
 #include <array>
@@ -39,8 +40,7 @@ class Metaball : public Object
 
     struct EvaluationZone
     {
-        space::Point3 lower_corner;
-        space::Point3 higher_corner;
+        const RayBox raybox;
         const float step; // step between the cubes
     };
 
@@ -82,7 +82,9 @@ class Metaball : public Object
     EvaluationZone compute_evaluate_zone(const float step) const;
 
     // Add a padding to the evaluation zone to avoid slicing a metaball
-    void pad_eval_zone_border(EvaluationZone& eval_zone) const;
+    void pad_eval_zone_border(space::Point3& lower,
+                              space::Point3& higher,
+                              const float step) const;
 
   private:
     const std::vector<space::Point3> potentials_;

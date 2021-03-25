@@ -13,7 +13,9 @@ Metaball::Metaball(const std::vector<space::Point3>& potentials,
     marching_cube();
 }
 
-void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone) const
+void Metaball::pad_eval_zone_border(space::Point3& lower,
+                                    space::Point3& higher,
+                                    const float step) const
 {
     for (const space::Point3& potential : potentials_)
     {
@@ -23,24 +25,23 @@ void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone) const
 
             // Lower corner
             {
-                space::Vector<1, float> lower_coord(eval_zone.lower_corner[i]);
+                space::Vector<1, float> lower_coord(lower[i]);
                 while (evaluate_potential<1>(potential_coord, lower_coord) >=
                        threshold_)
                 {
-                    eval_zone.lower_corner[i] -= eval_zone.step;
-                    lower_coord[0] = eval_zone.lower_corner[i];
+                    lower[i] -= step;
+                    lower_coord[0] = lower[i];
                 }
             }
 
             // Higher corner
             {
-                space::Vector<1, float> higher_coord(
-                    eval_zone.higher_corner[i]);
+                space::Vector<1, float> higher_coord(higher[i]);
                 while (evaluate_potential<1>(potential_coord, higher_coord) >=
                        threshold_)
                 {
-                    eval_zone.higher_corner[i] += eval_zone.step;
-                    higher_coord[0] = eval_zone.higher_corner[i];
+                    higher[i] += step;
+                    higher_coord[0] = higher[i];
                 }
             }
         }
@@ -50,8 +51,8 @@ void Metaball::pad_eval_zone_border(Metaball::EvaluationZone& eval_zone) const
     // Due to corner info & epsilone error
     for (uint8_t i = 0; i < 3; ++i)
     {
-        eval_zone.lower_corner[i] -= 2 * eval_zone.step;
-        eval_zone.higher_corner[i] += 2 * eval_zone.step;
+        lower[i] -= 2 * step;
+        higher[i] += 2 * step;
     }
 }
 
@@ -59,26 +60,26 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
 {
     assert(potentials_.size() != 0);
     // Find cube
-    space::Point3 min_point(potentials_[0]);
-    space::Point3 max_point(potentials_[0]);
+    space::Point3 lower(potentials_[0]);
+    space::Point3 higher(potentials_[0]);
 
     // Find the minimum on the x, y, z axes and the maximum on the x, y, z
     // axes Then, we can have the diagonal of the cube
     for (const space::Point3& potential : potentials_)
     {
-        min_point[0] = std::min(potential[0], min_point[0]);
-        min_point[1] = std::min(potential[1], min_point[1]);
-        min_point[2] = std::min(potential[2], min_point[2]);
+        lower[0] = std::min(potential[0], lower[0]);
+        lower[1] = std::min(potential[1], lower[1]);
+        lower[2] = std::min(potential[2], lower[2]);
 
-        max_point[0] = std::max(potential[0], max_point[0]);
-        max_point[1] = std::max(potential[1], max_point[1]);
-        max_point[2] = std::max(potential[2], max_point[2]);
+        higher[0] = std::max(potential[0], higher[0]);
+        higher[1] = std::max(potential[1], higher[1]);
+        higher[2] = std::max(potential[2], higher[2]);
     }
 
-    EvaluationZone eval_zone = {min_point, max_point, step};
-
     // FIXME: Check the padding value
-    pad_eval_zone_border(eval_zone);
+    pad_eval_zone_border(lower, higher, step);
+
+    EvaluationZone eval_zone = {RayBox(lower, higher), step};
 
     return eval_zone;
 }
@@ -90,16 +91,13 @@ Metaball::EvaluationZone Metaball::compute_evaluate_zone(const float step) const
 */
 void Metaball::marching_cube()
 {
-    for (float z = eval_zone_.lower_corner[2]; z < eval_zone_.higher_corner[2];
-         z += eval_zone_.step)
+    const space::Point3 lower = eval_zone_.raybox.lower_bound_get();
+    const space::Point3 higher = eval_zone_.raybox.higher_bound_get();
+    for (float z = lower[2]; z < higher[2]; z += eval_zone_.step)
     {
-        for (float y = eval_zone_.lower_corner[1];
-             y < eval_zone_.higher_corner[1];
-             y += eval_zone_.step)
+        for (float y = lower[1]; y < higher[1]; y += eval_zone_.step)
         {
-            for (float x = eval_zone_.lower_corner[0];
-                 x < eval_zone_.higher_corner[0];
-                 x += eval_zone_.step)
+            for (float x = lower[0]; x < higher[0]; x += eval_zone_.step)
             {
                 const Cube cube{space::Point3(x, y, z), eval_zone_.step};
                 evaluate_cube(cube);
