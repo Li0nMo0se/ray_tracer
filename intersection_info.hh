@@ -25,7 +25,9 @@ class IntersectionInfo
         intersection_ = ray.origin_get() + t_.value() * ray.direction_get();
     }
 
-    static constexpr float intersection_correction_ratio = 0.1f;
+    // FIXME: Instead of using the ratio, move until no intersection with
+    // yourself
+    static constexpr float intersection_correction_ratio = 0.2f;
 
     // TODO instead of going to the normal, go back until no intersection with
     // yourself
