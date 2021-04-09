@@ -1,9 +1,7 @@
 #pragma once
 
-#include <array>
 #include <cassert>
 #include <ostream>
-#include <vector>
 
 namespace space
 {

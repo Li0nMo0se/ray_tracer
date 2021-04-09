@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include "color.hh"
+#include <memory>
 
 namespace image
 {

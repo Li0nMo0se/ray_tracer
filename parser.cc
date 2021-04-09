@@ -64,7 +64,7 @@ void Parser::parse_texture(const std::string& line)
     float kd, ks, ns;
     ss >> kd >> ks >> ns;
 
-    if ("UniformTexture")
+    if (texture_type == "UniformTexture")
     {
         textures_.insert(
             {texture_name,
