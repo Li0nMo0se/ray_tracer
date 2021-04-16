@@ -13,18 +13,27 @@ Usage:
 
 * **file.scene**: the input file (must have the .scene format)
 * **output.ppm**: the output file (ppm format)
-*  **width**: width of the resolution of the output frame
-*  **height**: height of the resolution of the output frame
-*  **aliasing level**: level of aliasing by side. (i.e if aliasing level equals to 2, compute the mean of 2x2=4 pixels)
+* **width**: width of the resolution of the output frame
+* **height**: height of the resolution of the output frame
+* **aliasing level**: level of aliasing by side. (i.e if aliasing level equals to 2, compute the mean of 2x2=4 pixels)
 * **reflection_max_depth**: The maximum depth for the reflection
 
-## Geometric figures
+## Features
+### Translatable Geometric figures
 
 * Plan
 * Sphere
 * Raybox
 * Triangle
 * Metaball
+
+### Aliasing
+
+According to the aliasing level (supposed n here), compute the mean color of nxn subpixels of the current pixel 
+
+### Reflection
+
+The return of light. The reflection is restricted to the maximum reflection depth given as arguments.
 
 ## Scenes
 
