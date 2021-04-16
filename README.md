@@ -8,6 +8,7 @@
 
 ## Run
 Usage:
+
  ``./raytracer file.scene outputfile.ppm width height aliasing_level reflection_max_depth``
 
 * **file.scene**: the input file (must have the .scene format)
@@ -29,11 +30,11 @@ Usage:
 
 The raytracer reads a specific file format ``.scene``.
 
-A scene consists of a camera, a collection of lights and a collection of translatable and intersectable objects (geometric figures)
+A scene consists of a camera, a collection of lights and a collection of intersectable objects (geometric figures).
 
 ### Sample
 
-A scene file ``scenes/sample.scene`` describes how to write a scene file for each geometric figures, camera and lights. 
+A scene file ``scenes/sample.scene`` describes how to write a scene file for each geometric figures, camera and lights.
 
 ### Examples
 
