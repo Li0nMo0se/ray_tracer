@@ -1,2 +1,0 @@
-ASK: auto intersection correction in the case of shadow and reflection
-check intersection with itself if needed and use epsilon to go back

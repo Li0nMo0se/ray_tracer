@@ -27,7 +27,7 @@ RELEASE_CXX_FLAGS += -ftree-loop-im # Loop invariant motion on trees
 DEBUG_CXX_FLAGS = -g -O0
 
 # Add flags for release or debug
-CXX_FLAGS += $(DEBUG_CXX_FLAGS)
+CXX_FLAGS += $(RELEASE_CXX_FLAGS)
 LDXX_FLAGS =
 
 all: $(OBJ_FILES)

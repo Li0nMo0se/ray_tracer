@@ -1,6 +1,6 @@
 # CPU Ray tracer
 
-<img src="output_sample/big.png" width="250" height="250">
+<img src="output_samples/big.png" width="250" height="250">
 
 ## Build
 
@@ -41,8 +41,8 @@ Several more samples can be found in ``scenes/*``
 
 ## Output
 
-<img src="output_sample/multiple-spheres.png" width="250" height="250">
-<img src="output_sample/1metaball.png" width="250" height="250">
-<img src="output_sample/1raybox.png" width="250" height="250">
-<img src="output_sample/1sphere.png" width="250" height="250">
-<img src="output_sample/1triangle.png" width="250" height="250">
+<img src="output_samples/multiple-spheres.png" width="250" height="250">
+<img src="output_samples/1metaball.png" width="250" height="250">
+<img src="output_samples/1raybox.png" width="250" height="250">
+<img src="output_samples/1sphere.png" width="250" height="250">
+<img src="output_samples/1triangle.png" width="250" height="250">
